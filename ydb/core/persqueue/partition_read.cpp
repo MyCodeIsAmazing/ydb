@@ -375,13 +375,13 @@ ui64 GetFirstHeaderOffset(const TKey& key, const TString& blob)
 bool TReadInfo::UpdateUsage(const TClientBlob& blob,
                             ui32& cnt, ui32& size, ui32& lastBlobSize) const
 {
-    size += blob.GetBlobSize();
-    lastBlobSize += blob.GetBlobSize();
+    size += blob.GetSerializedSize();
+    lastBlobSize += blob.GetSerializedSize();
 
     if (blob.IsLastPart()) {
-        bool messageSkippingBehaviour =
-            AppData()->PQConfig.GetTopicsAreFirstClassCitizen() &&
-            (ReadTimestampMs > blob.WriteTimestamp.MilliSeconds());
+        const bool messageSkippingBehaviourEnabledInConfig = PreciseReadFromTimestampBehaviourEnabled(*AppData());
+        const bool messageSkippingBehaviour = messageSkippingBehaviourEnabledInConfig
+            && (ReadTimestampMs > blob.WriteTimestamp.MilliSeconds());
 
         ++cnt;
 
@@ -563,10 +563,11 @@ TReadAnswer TReadInfo::FormAnswer(
     const TVector<TRequestedBlob>& blobs = response->GetBlobs();
 
     auto updateUsage = [&](const TClientBlob& blob) {
-        size += blob.GetBlobSize();
-        lastBlobSize += blob.GetBlobSize();
+        size += blob.GetSerializedSize();
+        lastBlobSize += blob.GetSerializedSize();
         if (blob.IsLastPart()) {
-            bool messageSkippingBehaviour = (AppData()->PQConfig.GetTopicsAreFirstClassCitizen() &&
+            const bool messageSkippingBehaviourEnabledInConfig = PreciseReadFromTimestampBehaviourEnabled(*AppData());
+            const bool messageSkippingBehaviour = (messageSkippingBehaviourEnabledInConfig &&
                     ReadTimestampMs > blob.WriteTimestamp.MilliSeconds()) || blob.Data.empty();
             ++cnt;
             if (messageSkippingBehaviour) {
@@ -610,7 +611,7 @@ TReadAnswer TReadInfo::FormAnswer(
         for (const auto& writeBlob : Cached) {
             VERIFY_RESULT_BLOB(writeBlob, 0u);
 
-            readResult->SetBlobsCachedSize(readResult->GetBlobsCachedSize() + writeBlob.GetBlobSize());
+            readResult->SetBlobsCachedSize(readResult->GetBlobsCachedSize() + writeBlob.GetSerializedSize());
 
             if (userInfo) {
                 userInfo->AddTimestampToCache(

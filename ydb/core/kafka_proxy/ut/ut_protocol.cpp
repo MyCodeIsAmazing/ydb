@@ -24,6 +24,7 @@
 #include <ydb/public/sdk/cpp/include/ydb-cpp-sdk/client/types/status_codes.h>
 #include <ydb/public/sdk/cpp/include/ydb-cpp-sdk/client/table/table.h>
 #include <ydb/public/sdk/cpp/include/ydb-cpp-sdk/client/scheme/scheme.h>
+#include <ydb/public/sdk/cpp/include/ydb-cpp-sdk/client/topic/codecs.h>
 #include <ydb/public/api/grpc/draft/ydb_datastreams_v1.grpc.pb.h>
 
 #include <library/cpp/json/json_reader.h>
@@ -60,7 +61,7 @@ public:
     TIpPort Port;
 
     TTestServer(const TString& kafkaApiMode = "1", bool serverless = false, bool enableNativeKafkaBalancing = true,
-                bool enableAutoTopicCreation = true, bool enableAutoConsumerCreation = true, bool enableQuoting = true) {
+                bool enableAutoTopicCreation = false, bool enableAutoConsumerCreation = true, bool enableQuoting = true) {
         TPortManager portManager;
         Port = portManager.GetTcpPort();
 
@@ -91,8 +92,8 @@ public:
         appConfig.MutableKafkaProxyConfig()->SetListeningPort(Port);
         appConfig.MutableKafkaProxyConfig()->SetMaxMessageSize(1024);
         appConfig.MutableKafkaProxyConfig()->SetMaxInflightSize(2048);
-        if (!enableAutoTopicCreation) {
-            appConfig.MutableKafkaProxyConfig()->SetAutoCreateTopicsEnable(false);
+        if (enableAutoTopicCreation) {
+            appConfig.MutableKafkaProxyConfig()->SetAutoCreateTopicsEnable(true);
         }
         appConfig.MutableKafkaProxyConfig()->SetTopicCreationDefaultPartitions(2);
         if (!enableAutoConsumerCreation) {
@@ -104,6 +105,9 @@ public:
         }
 
         appConfig.MutablePQConfig()->MutableQuotingConfig()->SetEnableQuoting(enableQuoting);
+        if (!enableQuoting)
+            appConfig.MutablePQConfig()->MutableQuotingConfig()->SetEnableReadQuoting(false);
+
         appConfig.MutablePQConfig()->MutableQuotingConfig()->SetQuotaWaitDurationMs(300);
         appConfig.MutablePQConfig()->MutableQuotingConfig()->SetPartitionReadQuotaIsTwiceWriteQuota(enableQuoting);
         appConfig.MutablePQConfig()->MutableBillingMeteringConfig()->SetEnabled(true);
@@ -2284,16 +2288,21 @@ Y_UNIT_TEST_SUITE(KafkaProtocol) {
             checkDescribeTopic({{topic1, "compact"}, {topic2, "delete"}});
 
         }
-        return; //ToDo: FixMe
+        ui64 xtraKeySize = 3_MB;
+        std::vector<ui64> msgSize = {100_KB, 500_KB, 8_MB, /*9_MB, 20_MB*/};
+        // ToDo: return back after fix of big messages;
+        // LOGBROKER-9700
         std::unordered_map<size_t, TString> messages;
-        for (auto size : std::vector{100_KB, 500_KB, 9_MB, 20_MB, 3_MB}) {
+        for (auto size : msgSize) {
             messages[size] = TString{size, 'a'};
         }
-
+        messages[xtraKeySize] = TString{xtraKeySize, 'a'};
+        THashSet<TString> keysWritten;
         auto writeMessage = [&] (const TString& key, ui64 size) {
             NYdb::NTopic::TWriteMessage message{messages[size]};
             NYdb::NTopic::TWriteMessage::TMessageMeta meta1;
             meta1.push_back(std::make_pair("__key", key));
+            keysWritten.insert(key);
             message.MessageMeta(meta1);
             writeSession->Write(std::move(message));
             totalWritten++;
@@ -2301,13 +2310,14 @@ Y_UNIT_TEST_SUITE(KafkaProtocol) {
 
         Cerr << ">>>>> BEGIN WRITE" << Endl;
 
-        ui32 totalWriteCycles = 15;
+        ui32 totalWriteCycles = 20;
         for (auto i = 0u; i < totalWriteCycles; i++) {
-            writeMessage("key1", 100_KB);
-            writeMessage("key2", 500_KB);
-            // writeMessage("key3", 9_MB);
-            // writeMessage("key4", 20_MB);
-            writeMessage(TStringBuilder() << "extra-key-" << i, 3_MB);
+            for (auto size: msgSize) {
+                writeMessage(ToString(size), size);
+            }
+            TStringBuilder xtraKey;
+            xtraKey << "extra-key-" << i;
+            writeMessage(xtraKey, xtraKeySize);
             Cerr << "Wrote message " << i << Endl;
         }
         Cerr << ">>>>> END WRITE" << Endl;
@@ -2366,12 +2376,12 @@ Y_UNIT_TEST_SUITE(KafkaProtocol) {
             }
         }
         Cerr << "Total messages: " << totalMessages << Endl;
-        UNIT_ASSERT(keysFound.contains("key1") && keysFound.contains("key2")); //&& keysFound.contains("key3") && keysFound.contains("key4"));
-        UNIT_ASSERT_VALUES_EQUAL(keysFound.size(), 2 + totalWriteCycles); //4 + 15
+        UNIT_ASSERT(keysFound == keysWritten);
+        UNIT_ASSERT_VALUES_EQUAL(keysFound.size(), 3 + totalWriteCycles); //4 + 15
         UNIT_ASSERT(totalMessages < totalWritten);
-    }
+        }
 
-    Y_UNIT_TEST(TopicsWithCleaunpPolicyScenario) {
+    Y_UNIT_TEST(TopicsWithCleanupPolicyScenario) {
         // TTestServer(const TString& kafkaApiMode = "1", bool serverless = false, bool enableNativeKafkaBalancing = true,
         // bool enableAutoTopicCreation = true, bool enableAutoConsumerCreation = true, bool enableQuoting = true) {
         TInsecureTestServer testServer("2", false, true, true, true, false);
@@ -2717,6 +2727,41 @@ Y_UNIT_TEST_SUITE(KafkaProtocol) {
         UNIT_ASSERT_VALUES_EQUAL(metadataResponse->Brokers[0].Port, FAKE_SERVERLESS_KAFKA_PROXY_PORT);
     }
 
+    Y_UNIT_TEST(FetchCodecVisibilityInHeadersScenario) {
+        TInsecureTestServer testServer("1");
+
+        TString topicName = "test-topic";
+        TString consumerName = "consumer1";
+
+        NYdb::NTopic::TTopicClient pqClient(*testServer.Driver);
+        CreateTopic(pqClient, topicName, 1, {consumerName});
+
+        NYdb::NTopic::TWriteSessionSettings wsSettings;
+        wsSettings.Path(topicName).ProducerId("12345").PartitionId(0);
+        auto writer = pqClient.CreateSimpleBlockingWriteSession(wsSettings);
+
+        std::vector<NTopic::ECodec> codecs = {NTopic::ECodec::RAW, NTopic::ECodec::GZIP,  NTopic::ECodec::LZOP, NTopic::ECodec::ZSTD, NTopic::ECodec::CUSTOM, static_cast<NTopic::ECodec>(888)};
+        std::vector<TString> expectedCodecNames = {"RAW", "GZIP", "LZOP", "ZSTD", std::to_string(static_cast<TKafkaUint32>(NTopic::ECodec::CUSTOM)), "888"};
+        for (size_t i = 0; i < codecs.size(); i++) {
+            TString messageData = "Data" + std::to_string(i);
+            NYdb::NTopic::TWriteMessage msg = NYdb::NTopic::TWriteMessage::CompressedMessage(messageData, codecs[i], messageData.size());
+            writer->Write(std::move(msg));
+        }
+        writer->Close();
+
+        TKafkaTestClient kafkaClient(testServer.Port);
+        auto fetchResponse = kafkaClient.Fetch({{topicName, {0}}});
+        UNIT_ASSERT_VALUES_EQUAL(fetchResponse->ErrorCode, static_cast<TKafkaInt16>(EKafkaErrors::NONE_ERROR));
+        UNIT_ASSERT_VALUES_EQUAL(fetchResponse->Responses.size(), 1);
+        UNIT_ASSERT_VALUES_EQUAL(fetchResponse->Responses[0].Partitions[0].Records->Records.size(), codecs.size());
+        for (size_t i = 0; i < fetchResponse->Responses[0].Partitions[0].Records->Records.size(); i++) {
+            auto& record = fetchResponse->Responses[0].Partitions[0].Records->Records[i];
+            UNIT_ASSERT_VALUES_EQUAL(record.Headers.size(), 1);
+            UNIT_ASSERT_VALUES_EQUAL(TString(record.Headers[0].Key.value().data(), record.Headers[0].Key.value().size()), "__codec");
+            UNIT_ASSERT_VALUES_EQUAL(TString(record.Headers[0].Value.value().data(), record.Headers[0].Value.value().size()), expectedCodecNames[i]);
+        }
+    }
+
     Y_UNIT_TEST(OffsetFetchConsumerAutocreationScenario) {
         TInsecureTestServer testServer("1", false, false, false, true);
 
@@ -2956,7 +3001,7 @@ Y_UNIT_TEST_SUITE(KafkaProtocol) {
     }
 
     Y_UNIT_TEST(MetadataTopicAutocreationEnabledScenario) {
-        TInsecureTestServer testServer("1", false, false, true);
+        TInsecureTestServer testServer("1", false, false, true, true);
 
         TString nonExistedTopicName1 = "non-existent-topic-1";
         TString nonExistedTopicName2 = "non-existent-topic-2";

@@ -1,4 +1,84 @@
 {
+    "test.test_async_replication_describe": {
+        "create_result": {
+            "version": 9
+        },
+        "describe_result": {
+            "connection_params": {
+                "connection_string": "text",
+                "database": "/Root/dedicated_db",
+                "endpoint": "text",
+                "oauth": {}
+            },
+            "error": {
+                "issues": [
+                    {
+                        "message": "Discovery error: /Root/dedicated_db/TableNotExists: SCHEME_ERROR ({ <main>: Error: Path not found })",
+                        "severity": 1
+                    }
+                ]
+            },
+            "row_consistency": {},
+            "self": {
+                "created_at": {
+                    "plan_step": "not-zero-number-text",
+                    "tx_id": "not-zero-number-text"
+                },
+                "effective_permissions": [
+                    {
+                        "permission_names": [
+                            "ydb.database.connect"
+                        ],
+                        "subject": "USERS"
+                    },
+                    {
+                        "permission_names": [
+                            "ydb.generic.list"
+                        ],
+                        "subject": "METADATA-READERS"
+                    },
+                    {
+                        "permission_names": [
+                            "ydb.granular.select_row"
+                        ],
+                        "subject": "DATA-READERS"
+                    },
+                    {
+                        "permission_names": [
+                            "ydb.tables.modify"
+                        ],
+                        "subject": "DATA-WRITERS"
+                    },
+                    {
+                        "permission_names": [
+                            "ydb.granular.create_directory",
+                            "ydb.granular.write_attributes",
+                            "ydb.granular.create_table",
+                            "ydb.granular.remove_schema",
+                            "ydb.granular.create_queue",
+                            "ydb.granular.alter_schema"
+                        ],
+                        "subject": "DDL-ADMINS"
+                    },
+                    {
+                        "permission_names": [
+                            "ydb.access.grant"
+                        ],
+                        "subject": "ACCESS-ADMINS"
+                    },
+                    {
+                        "permission_names": [
+                            "ydb.generic.manage"
+                        ],
+                        "subject": "DATABASE-ADMINS"
+                    }
+                ],
+                "name": "TestAsyncReplication",
+                "owner": "root@builtin",
+                "type": "REPLICATION"
+            }
+        }
+    },
     "test.test_counter": {
         "status_code": 200,
         "text": "1\n"
@@ -497,6 +577,7 @@
             {
                 "AllocationUnits": "0",
                 "Available": "not-zero-number-text",
+                "DiskSpace": "Green",
                 "DiskSpaceUsage": "not-zero-number",
                 "ErasureSpecies": "none",
                 "GroupGeneration": "1",
@@ -513,22 +594,24 @@
                 "Used": "0",
                 "VDisks": [
                     {
-                        "AvailableSize": "text",
+                        "AllocatedSize": "0",
+                        "AvailableSize": "not-zero-number-text",
                         "DiskSpace": "Green",
                         "NodeId": 1,
                         "PDisk": {
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "DecommitStatus": "DECOMMIT_NONE",
                             "DiskSpace": "Green",
                             "Guid": "1",
                             "PDiskId": "1-1",
                             "Path": "SectorMap:1:64",
+                            "SlotCount": "not-zero-number-text",
                             "SlotSize": "not-zero-number-text",
                             "Status": "accepted-value",
                             "TotalSize": "not-zero-number-text",
                             "Type": "hdd",
                             "Whiteboard": {
-                                "AvailableSize": "text",
+                                "AvailableSize": "not-zero-number-text",
                                 "Category": "0",
                                 "ChangeTime": "not-zero-number-text",
                                 "Device": "Green",
@@ -550,7 +633,7 @@
                         "VDiskId": "0-1-0-0-0",
                         "Whiteboard": {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -586,6 +669,7 @@
             {
                 "AllocationUnits": "0",
                 "Available": "not-zero-number-text",
+                "DiskSpace": "Green",
                 "DiskSpaceUsage": "not-zero-number",
                 "ErasureSpecies": "none",
                 "GroupGeneration": "1",
@@ -604,22 +688,24 @@
                 "Used": "0",
                 "VDisks": [
                     {
-                        "AvailableSize": "text",
+                        "AllocatedSize": "0",
+                        "AvailableSize": "not-zero-number-text",
                         "DiskSpace": "Green",
                         "NodeId": 1,
                         "PDisk": {
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "DecommitStatus": "DECOMMIT_NONE",
                             "DiskSpace": "Green",
                             "Guid": "1",
                             "PDiskId": "1-1",
                             "Path": "SectorMap:1:64",
+                            "SlotCount": "not-zero-number-text",
                             "SlotSize": "not-zero-number-text",
                             "Status": "accepted-value",
                             "TotalSize": "not-zero-number-text",
                             "Type": "hdd",
                             "Whiteboard": {
-                                "AvailableSize": "text",
+                                "AvailableSize": "not-zero-number-text",
                                 "Category": "0",
                                 "ChangeTime": "not-zero-number-text",
                                 "Device": "Green",
@@ -641,7 +727,7 @@
                         "VDiskId": "2181038080-1-0-0-0",
                         "Whiteboard": {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -677,6 +763,7 @@
             {
                 "AllocationUnits": "0",
                 "Available": "not-zero-number-text",
+                "DiskSpace": "Green",
                 "DiskSpaceUsage": "not-zero-number",
                 "ErasureSpecies": "none",
                 "GroupGeneration": "1",
@@ -695,22 +782,24 @@
                 "Used": "0",
                 "VDisks": [
                     {
-                        "AvailableSize": "text",
+                        "AllocatedSize": "0",
+                        "AvailableSize": "not-zero-number-text",
                         "DiskSpace": "Green",
                         "NodeId": 1,
                         "PDisk": {
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "DecommitStatus": "DECOMMIT_NONE",
                             "DiskSpace": "Green",
                             "Guid": "1",
                             "PDiskId": "1-1",
                             "Path": "SectorMap:1:64",
+                            "SlotCount": "not-zero-number-text",
                             "SlotSize": "not-zero-number-text",
                             "Status": "accepted-value",
                             "TotalSize": "not-zero-number-text",
                             "Type": "hdd",
                             "Whiteboard": {
-                                "AvailableSize": "text",
+                                "AvailableSize": "not-zero-number-text",
                                 "Category": "0",
                                 "ChangeTime": "not-zero-number-text",
                                 "Device": "Green",
@@ -732,7 +821,7 @@
                         "VDiskId": "2181038081-1-0-0-0",
                         "Whiteboard": {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -768,6 +857,7 @@
             {
                 "AllocationUnits": "32",
                 "Available": "not-zero-number-text",
+                "DiskSpace": "Green",
                 "DiskSpaceUsage": "not-zero-number",
                 "ErasureSpecies": "none",
                 "GroupGeneration": "2",
@@ -786,22 +876,24 @@
                 "Used": "0",
                 "VDisks": [
                     {
-                        "AvailableSize": "text",
+                        "AllocatedSize": "0",
+                        "AvailableSize": "not-zero-number-text",
                         "DiskSpace": "Green",
                         "NodeId": 1,
                         "PDisk": {
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "DecommitStatus": "DECOMMIT_NONE",
                             "DiskSpace": "Green",
                             "Guid": "1",
                             "PDiskId": "1-1",
                             "Path": "SectorMap:1:64",
+                            "SlotCount": "not-zero-number-text",
                             "SlotSize": "not-zero-number-text",
                             "Status": "accepted-value",
                             "TotalSize": "not-zero-number-text",
                             "Type": "hdd",
                             "Whiteboard": {
-                                "AvailableSize": "text",
+                                "AvailableSize": "not-zero-number-text",
                                 "Category": "0",
                                 "ChangeTime": "not-zero-number-text",
                                 "Device": "Green",
@@ -823,7 +915,7 @@
                         "VDiskId": "2181038082-2-0-0-0",
                         "Whiteboard": {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -859,6 +951,7 @@
             {
                 "AllocationUnits": "52",
                 "Available": "not-zero-number-text",
+                "DiskSpace": "Green",
                 "DiskSpaceUsage": "not-zero-number",
                 "ErasureSpecies": "none",
                 "GroupGeneration": "2",
@@ -877,22 +970,24 @@
                 "Used": "0",
                 "VDisks": [
                     {
-                        "AvailableSize": "text",
+                        "AllocatedSize": "0",
+                        "AvailableSize": "not-zero-number-text",
                         "DiskSpace": "Green",
                         "NodeId": 1,
                         "PDisk": {
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "DecommitStatus": "DECOMMIT_NONE",
                             "DiskSpace": "Green",
                             "Guid": "1",
                             "PDiskId": "1-1",
                             "Path": "SectorMap:1:64",
+                            "SlotCount": "not-zero-number-text",
                             "SlotSize": "not-zero-number-text",
                             "Status": "accepted-value",
                             "TotalSize": "not-zero-number-text",
                             "Type": "hdd",
                             "Whiteboard": {
-                                "AvailableSize": "text",
+                                "AvailableSize": "not-zero-number-text",
                                 "Category": "0",
                                 "ChangeTime": "not-zero-number-text",
                                 "Device": "Green",
@@ -914,7 +1009,7 @@
                         "VDiskId": "2181038083-2-0-0-0",
                         "Whiteboard": {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -1204,79 +1299,117 @@
             "Truncated": true
         }
     },
-    "test.test_transfer_describe": {
-        "connection_params": {
-            "connection_string": "text",
-            "database": "/Root/dedicated_db",
-            "endpoint": "text",
-            "oauth": {}
-        },
-        "error": {
-            "issues": [
+    "test.test_topic_data_cdc": {
+        "alter": null,
+        "data": {
+            "EndOffset": 1,
+            "Messages": [
                 {
-                    "message": "Discovery error: /Root/dedicated_db/TableNotExists: SCHEME_ERROR ({ <main>: Error: Path not found })",
-                    "severity": 1
-                }
-            ]
-        },
-        "row_consistency": {},
-        "self": {
-            "created_at": {
-                "plan_step": "not-zero-number-text",
-                "tx_id": "not-zero-number-text"
-            },
-            "effective_permissions": [
-                {
-                    "permission_names": [
-                        "ydb.database.connect"
-                    ],
-                    "subject": "USERS"
-                },
-                {
-                    "permission_names": [
-                        "ydb.generic.list"
-                    ],
-                    "subject": "METADATA-READERS"
-                },
-                {
-                    "permission_names": [
-                        "ydb.granular.select_row"
-                    ],
-                    "subject": "DATA-READERS"
-                },
-                {
-                    "permission_names": [
-                        "ydb.tables.modify"
-                    ],
-                    "subject": "DATA-WRITERS"
-                },
-                {
-                    "permission_names": [
-                        "ydb.granular.create_directory",
-                        "ydb.granular.write_attributes",
-                        "ydb.granular.create_table",
-                        "ydb.granular.remove_schema",
-                        "ydb.granular.create_queue",
-                        "ydb.granular.alter_schema"
-                    ],
-                    "subject": "DDL-ADMINS"
-                },
-                {
-                    "permission_names": [
-                        "ydb.access.grant"
-                    ],
-                    "subject": "ACCESS-ADMINS"
-                },
-                {
-                    "permission_names": [
-                        "ydb.generic.manage"
-                    ],
-                    "subject": "DATABASE-ADMINS"
+                    "Codec": 0,
+                    "CreateTimestamp": "not-zero-number",
+                    "Message": "eyJ1cGRhdGUiOnsibmFtZSI6ImVsbGV2ZW4ifSwia2V5IjpbMTFdfQ==",
+                    "Offset": 0,
+                    "OriginalSize": 40,
+                    "ProducerId": "not-zero-number-text",
+                    "SeqNo": 1,
+                    "StorageSize": 40,
+                    "TimestampDiff": "number",
+                    "WriteTimestamp": "not-zero-number"
                 }
             ],
-            "name": "TestAsyncReplication",
-            "owner": "root@builtin",
-            "type": "REPLICATION"
+            "StartOffset": 0,
+            "Truncated": false
+        },
+        "insert": {
+            "version": 9
+        },
+        "update": {
+            "version": 9
+        }
+    },
+    "test.test_transfer_describe": {
+        "describe_result": {
+            "batch_settings": {
+                "flush_interval": {
+                    "seconds": "60"
+                }
+            },
+            "connection_params": {
+                "connection_string": "text",
+                "oauth": {}
+            },
+            "consumer_name": "OurConsumer",
+            "destination_path": "/Root/dedicated_db/TestTransferDestinationTable",
+            "running": {},
+            "self": {
+                "created_at": {
+                    "plan_step": "not-zero-number-text",
+                    "tx_id": "not-zero-number-text"
+                },
+                "effective_permissions": [
+                    {
+                        "permission_names": [
+                            "ydb.database.connect"
+                        ],
+                        "subject": "USERS"
+                    },
+                    {
+                        "permission_names": [
+                            "ydb.generic.list"
+                        ],
+                        "subject": "METADATA-READERS"
+                    },
+                    {
+                        "permission_names": [
+                            "ydb.granular.select_row"
+                        ],
+                        "subject": "DATA-READERS"
+                    },
+                    {
+                        "permission_names": [
+                            "ydb.tables.modify"
+                        ],
+                        "subject": "DATA-WRITERS"
+                    },
+                    {
+                        "permission_names": [
+                            "ydb.granular.create_directory",
+                            "ydb.granular.write_attributes",
+                            "ydb.granular.create_table",
+                            "ydb.granular.remove_schema",
+                            "ydb.granular.create_queue",
+                            "ydb.granular.alter_schema"
+                        ],
+                        "subject": "DDL-ADMINS"
+                    },
+                    {
+                        "permission_names": [
+                            "ydb.access.grant"
+                        ],
+                        "subject": "ACCESS-ADMINS"
+                    },
+                    {
+                        "permission_names": [
+                            "ydb.generic.manage"
+                        ],
+                        "subject": "DATABASE-ADMINS"
+                    }
+                ],
+                "name": "TestTransfer",
+                "owner": "root@builtin",
+                "type": "TRANSFER"
+            },
+            "source_path": "/TestTransferSourceTopic",
+            "transformation_lambda": "$__ydb_transfer_lambda = ($x) -> { return [<| id: $x._offset, message: $x._data |>]; };\n"
+        },
+        "table_result": {
+            "version": 9
+        },
+        "topic_result": {
+            "version": 9
+        },
+        "transfer_result": {
+            "version": 9
         }
     },
     "test.test_viewer_acl": {
@@ -4017,7 +4150,7 @@
                     "NodeId": 1,
                     "PDisks": [
                         {
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "Category": "0",
                             "ChangeTime": "not-zero-number-text",
                             "Device": "Green",
@@ -4187,7 +4320,7 @@
                     "VDisks": [
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -4222,7 +4355,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -4257,7 +4390,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -4292,7 +4425,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -4327,7 +4460,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -4994,7 +5127,7 @@
                     "NodeId": 1,
                     "PDisks": [
                         {
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "Category": "0",
                             "ChangeTime": "not-zero-number-text",
                             "Device": "Green",
@@ -5216,7 +5349,7 @@
                     "VDisks": [
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -5251,7 +5384,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -5286,7 +5419,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -5321,7 +5454,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -5356,7 +5489,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -6023,7 +6156,7 @@
     "test.test_viewer_pdiskinfo": {
         "PDiskStateInfo": [
             {
-                "AvailableSize": "text",
+                "AvailableSize": "not-zero-number-text",
                 "Category": "0",
                 "ChangeTime": "not-zero-number-text",
                 "Device": 1,
@@ -7323,7 +7456,7 @@
                     "NodeId": 1,
                     "PDisks": [
                         {
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "Category": "0",
                             "ChangeTime": "not-zero-number-text",
                             "Device": "Green",
@@ -7493,7 +7626,7 @@
                     "VDisks": [
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -7528,7 +7661,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -7563,7 +7696,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -7598,7 +7731,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -7633,7 +7766,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -7692,7 +7825,7 @@
                     "NodeId": 1,
                     "PDisks": [
                         {
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "Category": "0",
                             "ChangeTime": "not-zero-number-text",
                             "Device": "Green",
@@ -7862,7 +7995,7 @@
                     "VDisks": [
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -7897,7 +8030,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -7932,7 +8065,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -7967,7 +8100,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -8002,7 +8135,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -8061,7 +8194,7 @@
                     "NodeId": 1,
                     "PDisks": [
                         {
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "Category": "0",
                             "ChangeTime": "not-zero-number-text",
                             "Device": "Green",
@@ -8231,7 +8364,7 @@
                     "VDisks": [
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -8266,7 +8399,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -8301,7 +8434,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -8336,7 +8469,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -8371,7 +8504,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -8430,7 +8563,7 @@
                     "NodeId": 1,
                     "PDisks": [
                         {
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "Category": "0",
                             "ChangeTime": "not-zero-number-text",
                             "Device": "Green",
@@ -8600,7 +8733,7 @@
                     "VDisks": [
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -8635,7 +8768,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -8670,7 +8803,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -8705,7 +8838,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -8740,7 +8873,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -8799,7 +8932,7 @@
                     "NodeId": 1,
                     "PDisks": [
                         {
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "Category": "0",
                             "ChangeTime": "not-zero-number-text",
                             "Device": "Green",
@@ -9021,7 +9154,7 @@
                     "VDisks": [
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -9056,7 +9189,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -9091,7 +9224,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -9126,7 +9259,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -9161,7 +9294,7 @@
                         },
                         {
                             "AllocatedSize": "0",
-                            "AvailableSize": "text",
+                            "AvailableSize": "not-zero-number-text",
                             "ChangeTime": "not-zero-number-text",
                             "DiskSpace": "Green",
                             "FrontQueues": "Green",
@@ -11403,7 +11536,7 @@
         "VDiskStateInfo": [
             {
                 "AllocatedSize": "0",
-                "AvailableSize": "text",
+                "AvailableSize": "not-zero-number-text",
                 "ChangeTime": "not-zero-number-text",
                 "DiskSpace": 1,
                 "FrontQueues": 1,
@@ -11438,7 +11571,7 @@
             },
             {
                 "AllocatedSize": "0",
-                "AvailableSize": "text",
+                "AvailableSize": "not-zero-number-text",
                 "ChangeTime": "not-zero-number-text",
                 "DiskSpace": 1,
                 "FrontQueues": 1,
@@ -11473,7 +11606,7 @@
             },
             {
                 "AllocatedSize": "0",
-                "AvailableSize": "text",
+                "AvailableSize": "not-zero-number-text",
                 "ChangeTime": "not-zero-number-text",
                 "DiskSpace": 1,
                 "FrontQueues": 1,
@@ -11508,7 +11641,7 @@
             },
             {
                 "AllocatedSize": "0",
-                "AvailableSize": "text",
+                "AvailableSize": "not-zero-number-text",
                 "ChangeTime": "not-zero-number-text",
                 "DiskSpace": 1,
                 "FrontQueues": 1,
@@ -11543,7 +11676,7 @@
             },
             {
                 "AllocatedSize": "0",
-                "AvailableSize": "text",
+                "AvailableSize": "not-zero-number-text",
                 "ChangeTime": "not-zero-number-text",
                 "DiskSpace": 1,
                 "FrontQueues": 1,

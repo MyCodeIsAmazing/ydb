@@ -462,6 +462,11 @@ void TPartition::OnHandleWriteResponse(const TActorContext& ctx)
 {
     KVWriteInProgress = false;
 
+    for (auto& span : TxForPersistSpans) {
+        span.End();
+    }
+    TxForPersistSpans.clear();
+
     if (DeletePartitionState == DELETION_IN_PROCESS) {
         // before deleting an supportive partition, it is necessary to summarize its work
         HandleWakeup(ctx);
@@ -643,7 +648,7 @@ NKikimrPQ::EScaleStatus TPartition::CheckScaleStatus(const TActorContext& ctx) {
 
 void TPartition::ChangeScaleStatusIfNeeded(NKikimrPQ::EScaleStatus scaleStatus) {
     auto now = TInstant::Now();
-    if (scaleStatus == ScaleStatus || LastScaleRequestTime + TDuration::Seconds(SCALE_REQUEST_REPEAT_MIN_SECONDS) > now) {
+    if (scaleStatus == ScaleStatus || MirroringEnabled(Config) || LastScaleRequestTime + TDuration::Seconds(SCALE_REQUEST_REPEAT_MIN_SECONDS) > now) {
         return;
     }
     Send(Tablet, new TEvPQ::TEvPartitionScaleStatusChanged(Partition.OriginalPartitionId, scaleStatus));
@@ -1016,12 +1021,14 @@ void TPartition::ExecRequest(TSplitMessageGroupMsg& msg, ProcessParameters& para
 
 TPartition::EProcessResult TPartition::PreProcessRequest(TWriteMsg& p) {
     if (!CanWrite()) {
+        WriteInflightSize -=  p.Msg.Data.size();
         ScheduleReplyError(p.Cookie, false, InactivePartitionErrorCode,
                            TStringBuilder() << "Write to inactive partition " << Partition.OriginalPartitionId);
         return EProcessResult::ContinueDrop;
     }
 
     if (DiskIsFull) {
+        WriteInflightSize -=  p.Msg.Data.size();
         ScheduleReplyError(p.Cookie, false,
                            NPersQueue::NErrorCode::WRITE_ERROR_DISK_IS_FULL,
                            "Disk is full");
@@ -1140,28 +1147,17 @@ void TPartition::TryCorrectStartOffset(TMaybe<ui64> offset)
 }
 
 bool TPartition::ExecRequest(TWriteMsg& p, ProcessParameters& parameters, TEvKeyValue::TEvRequest* request) {
-    if (!CanWrite()) {
-        ScheduleReplyError(p.Cookie, false, InactivePartitionErrorCode,
-                           TStringBuilder() << "Write to inactive partition " << Partition.OriginalPartitionId);
-        return false;
-    }
-    if (DiskIsFull) {
-        ScheduleReplyError(p.Cookie, false,
-                           NPersQueue::NErrorCode::WRITE_ERROR_DISK_IS_FULL,
-                           "Disk is full");
-        return false;
-    }
-    const auto& ctx = ActorContext();
-
-    ui64& curOffset = parameters.CurOffset;
-    auto& sourceIdBatch = parameters.SourceIdBatch;
-    auto sourceId = sourceIdBatch.GetSource(p.Msg.SourceId);
-
     Y_DEBUG_ABORT_UNLESS(WriteInflightSize >= p.Msg.Data.size(),
                          "PQ %" PRIu64 ", Partition {%" PRIu32 ", %" PRIu32 "}, WriteInflightSize=%" PRIu64 ", p.Msg.Data.size=%" PRISZT,
                          TabletID, Partition.OriginalPartitionId, Partition.InternalPartitionId,
                          WriteInflightSize, p.Msg.Data.size());
     WriteInflightSize -= p.Msg.Data.size();
+
+    const auto& ctx = ActorContext();
+
+    ui64& curOffset = parameters.CurOffset;
+    auto& sourceIdBatch = parameters.SourceIdBatch;
+    auto sourceId = sourceIdBatch.GetSource(p.Msg.SourceId);
 
     TabletCounters.Percentile()[COUNTER_LATENCY_PQ_RECEIVE_QUEUE].IncrementFor(ctx.Now().MilliSeconds() - p.Msg.ReceiveTimestamp);
     //check already written
@@ -1358,9 +1354,9 @@ bool TPartition::ExecRequest(TWriteMsg& p, ProcessParameters& parameters, TEvKey
     }
     WriteTimestamp = ctx.Now();
     WriteTimestampEstimate = p.Msg.WriteTimestamp > 0 ? TInstant::MilliSeconds(p.Msg.WriteTimestamp) : WriteTimestamp;
-    TClientBlob blob(p.Msg.SourceId, p.Msg.SeqNo, std::move(p.Msg.Data), std::move(partData), WriteTimestampEstimate,
+    TClientBlob blob(TString{p.Msg.SourceId}, p.Msg.SeqNo, std::move(p.Msg.Data), partData, WriteTimestampEstimate,
                      TInstant::MilliSeconds(p.Msg.CreateTimestamp == 0 ? curOffset : p.Msg.CreateTimestamp),
-                     p.Msg.UncompressedSize, p.Msg.PartitionKey, p.Msg.ExplicitHashKey); //remove curOffset when LB will report CTime
+                     p.Msg.UncompressedSize, std::move(p.Msg.PartitionKey), std::move(p.Msg.ExplicitHashKey)); //remove curOffset when LB will report CTime
 
     const ui64 writeLagMs =
         (WriteTimestamp - TInstant::MilliSeconds(p.Msg.CreateTimestamp)).MilliSeconds();
@@ -1419,7 +1415,7 @@ bool TPartition::ExecRequest(TWriteMsg& p, ProcessParameters& parameters, TEvKey
 
             Y_ABORT_UNLESS(!BlobEncoder.NewHead.GetLastBatch().Packed);
             BlobEncoder.NewHead.AddBlob(x);
-            BlobEncoder.NewHead.PackedSize += x.GetBlobSize();
+            BlobEncoder.NewHead.PackedSize += x.GetSerializedSize();
             if (BlobEncoder.NewHead.GetLastBatch().GetUnpackedSize() >= BATCH_UNPACK_SIZE_BORDER) {
                 BlobEncoder.PackLastBatch();
             }

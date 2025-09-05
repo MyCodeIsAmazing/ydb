@@ -974,7 +974,6 @@ columns {
 primary_key: "key"
 storage_settings {
   store_external_blobs: DISABLED
-  external_data_channels_count: 1
 }
 column_families {
   name: "default"
@@ -2924,4 +2923,42 @@ attributes {
     Y_UNIT_TEST(TopicsWithPermissions) {
       TestTopic(true);
     }
+
+    Y_UNIT_TEST(ExportTableWithUniqueIndex) {
+      Env();
+      ui64 txId = 100;
+
+      TestCreateIndexedTable(Runtime(), ++txId, "/MyRoot", R"(
+          TableDescription {
+            Name: "Table"
+            Columns { Name: "key" Type: "Uint32" }
+            Columns { Name: "value" Type: "Utf8" }
+            KeyColumnNames: ["key"]
+          }
+          IndexDescription {
+            Name: "ByValue"
+            KeyColumnNames: ["value"]
+            Type: EIndexTypeGlobalUnique
+          }
+      )");
+      Env().TestWaitNotification(Runtime(), txId);
+
+      TestExport(Runtime(), ++txId, "/MyRoot", Sprintf(R"(
+          ExportToS3Settings {
+            endpoint: "localhost:%d"
+            scheme: HTTP
+            items {
+              source_path: "/MyRoot/Table"
+              destination_prefix: ""
+            }
+          }
+      )", S3Port()));
+      Env().TestWaitNotification(Runtime(), txId);
+
+      TestDescribeResult(DescribePrivatePath(Runtime(), "/MyRoot/Table/ByValue"),
+            {NLs::PathExist,
+             NLs::IndexType(NKikimrSchemeOp::EIndexTypeGlobalUnique),
+             NLs::IndexState(NKikimrSchemeOp::EIndexStateReady),
+             NLs::IndexKeys({"value"})});
+  }
 }
