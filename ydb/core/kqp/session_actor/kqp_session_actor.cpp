@@ -1481,7 +1481,7 @@ public:
             }
         }
 
-        if (QueryState->GetResultSetFormatSettings().IsArrowFormat() && !AppData()->FeatureFlags.GetEnableArrowResultSetFormat()) {
+        if (QueryState->GetFormatsSettings().IsArrowFormat() && !AppData()->FeatureFlags.GetEnableArrowResultSetFormat()) {
             ReplyQueryError(Ydb::StatusIds::BAD_REQUEST, "Arrow result set format is not enabled. Please set EnableArrowResultSetFormat feature flag to true.");
             return true;
         }
@@ -1631,8 +1631,10 @@ public:
         const TString requestType = QueryState->GetRequestType();
         const bool temporary = GetTemporaryTableInfo(tx).has_value();
 
-        auto executerActor = CreateKqpSchemeExecuter(tx, QueryState->GetType(), SelfId(), requestType, Settings.Database, userToken, clientAddress,
-            temporary, TempTablesState.SessionId, QueryState->UserRequestContext, KqpTempTablesAgentActor);
+        auto executerActor = CreateKqpSchemeExecuter(
+            tx, QueryState->GetType(), SelfId(), requestType, Settings.Database, userToken, clientAddress,
+            temporary, /* createTmpDir */ temporary && !TempTablesState.NeedCleaning,
+            QueryState->IsCreateTableAs(), TempTablesState.SessionId, QueryState->UserRequestContext, KqpTempTablesAgentActor);
 
         ExecuterId = RegisterWithSameMailbox(executerActor);
 
@@ -1657,8 +1659,8 @@ public:
         request.TraceId = QueryState ? QueryState->KqpSessionSpan.GetTraceId() : NWilson::TTraceId();
         request.CaFactory_ = CaFactory_;
         request.ResourceManager_ = ResourceManager_;
-        request.SaveQueryPhysicalGraph = QueryState && QueryState->SaveQueryPhysicalGraph && request.Transactions.size() == 1;
-        request.QueryPhysicalGraph = QueryState ? QueryState->QueryPhysicalGraph : nullptr;
+        request.SaveQueryPhysicalGraph = QueryState && QueryState->SaveQueryPhysicalGraph && request.Transactions.size() == 1 && !isRollback;
+        request.QueryPhysicalGraph = QueryState && !isRollback ? QueryState->QueryPhysicalGraph : nullptr;
         LOG_D("Sending to Executer TraceId: " << request.TraceId.GetTraceId() << " " << request.TraceId.GetSpanIdSize());
 
         if (txCtx->EnableOltpSink.value_or(false) && !txCtx->TxManager) {
@@ -1713,7 +1715,7 @@ public:
 
         auto executerActor = CreateKqpExecuter(std::move(request), Settings.Database,
             QueryState ? QueryState->UserToken : TIntrusiveConstPtr<NACLib::TUserToken>(),
-            QueryState ? QueryState->GetResultSetFormatSettings() : TResultSetFormatSettings{},
+            QueryState ? QueryState->GetFormatsSettings() : NFormats::TFormatsSettings{},
             RequestCounters, TExecuterConfig(Settings.MutableExecuterConfig, Settings.TableService),
             AsyncIoFactory, SelfId(),
             QueryState ? QueryState->UserRequestContext : MakeIntrusive<TUserRequestContext>("", Settings.Database, SessionId),
@@ -1908,7 +1910,7 @@ public:
             return;
         }
         if (QueryState->IsCreateTableAs()) {
-            TempTablesState.HasCreateTableAs = true;
+            TempTablesState.NeedCleaning = true;
             QueryState->UpdateTempTablesState(TempTablesState);
             return;
         }
@@ -1917,6 +1919,7 @@ public:
         if (optInfo) {
             auto [isCreate, info] = *optInfo;
             if (isCreate) {
+                TempTablesState.NeedCleaning = true;
                 TempTablesState.TempTables[info.first] = info.second;
             } else {
                 TempTablesState.TempTables.erase(info.first);
@@ -2331,7 +2334,7 @@ public:
                     if (QueryState->QueryData->HasTrailingTxResult(phyQuery.GetResultBindings(i))) {
                         auto ydbResult = QueryState->QueryData->GetYdbTxResult(
                             phyQuery.GetResultBindings(i), response->GetArena(),
-                            QueryState->GetResultSetFormatSettings(), {});
+                            QueryState->GetFormatsSettings(), {});
 
                         YQL_ENSURE(ydbResult);
                         ++trailingResultsCount;
@@ -2349,7 +2352,7 @@ public:
 
                 auto* ydbResult = QueryState->QueryData->GetYdbTxResult(
                     phyQuery.GetResultBindings(i), response->GetArena(),
-                    QueryState->GetResultSetFormatSettings(), effectiveRowsLimit);
+                    QueryState->GetFormatsSettings(), effectiveRowsLimit);
                 response->AddYdbResults()->Swap(ydbResult);
             }
         }
@@ -2565,6 +2568,10 @@ public:
     void HandleExecute(TEvKqp::TEvCloseSessionRequest::TPtr&) {
         YQL_ENSURE(QueryState);
         QueryState->KeepSession = false;
+        {
+            auto abort = MakeHolder<NYql::NDq::TEvDq::TEvAbortExecution>(NYql::NDqProto::StatusIds::CANCELLED, "Query execution is cancelled because session was requested to be closed.");
+            Send(SelfId(), abort.Release());
+        }
     }
 
     void HandleCleanup(TEvKqp::TEvCloseSessionRequest::TPtr&) {

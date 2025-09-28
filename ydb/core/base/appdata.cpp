@@ -80,6 +80,7 @@ struct TAppData::TImpl {
     NKikimrConfig::TBridgeConfig BridgeConfig;
     NKikimrConfig::TStatisticsConfig StatisticsConfig;
     TMetricsConfig MetricsConfig;
+    NKikimrConfig::TSystemTabletBackupConfig SystemTabletBackupConfig;
 };
 
 TAppData::TAppData(
@@ -106,7 +107,8 @@ TAppData::TAppData(
     , CompilerSchemeCacheTables(Max<ui64>() / 4)
     , Mon(nullptr)
     , Icb(new TControlBoard())
-    , InFlightLimiterRegistry(new NGRpcService::TInFlightLimiterRegistry(Icb))
+    , Dcb(new TDynamicControlBoard())
+    , InFlightLimiterRegistry(new NGRpcService::TInFlightLimiterRegistry())
     , SharedCachePages(new NSharedCache::TSharedCachePages())
     , StreamingConfig(Impl->StreamingConfig)
     , PQConfig(Impl->PQConfig)
@@ -144,6 +146,7 @@ TAppData::TAppData(
     , BridgeConfig(Impl->BridgeConfig)
     , StatisticsConfig(Impl->StatisticsConfig)
     , MetricsConfig(Impl->MetricsConfig)
+    , SystemTabletBackupConfig(Impl->SystemTabletBackupConfig)
     , KikimrShouldContinue(kikimrShouldContinue)
     , TracingConfigurator(MakeIntrusive<NJaegerTracing::TSamplingThrottlingConfigurator>(TimeProvider, RandomProvider))
 {}

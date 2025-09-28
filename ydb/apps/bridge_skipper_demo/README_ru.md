@@ -2,7 +2,7 @@
 
 **Не используйте данную утилиту в продакшене!**
 
-YDB поддерживает работу в режиме [Bridge](https://ydb.tech/docs/ru/concepts/bridge?version=main). CLI утилита `skipper.py` реализует демо-версию `Bridge skipper'a`: выполняет мониторинг состояния кластера, управляет частями кластера, называемыми [pile](https://ydb.tech/docs/ru/concepts/glossary?version=main#pile), и отображает состояние кластера в TUI.
+YDB поддерживает работу в режиме [Bridge](https://ydb.tech/docs/ru/concepts/bridge?version=main). CLI утилита `skipper.py` реализует демо-версию `Bridge keeper'a`: выполняет мониторинг состояния кластера, управляет частями кластера, называемыми [pile](https://ydb.tech/docs/ru/concepts/glossary?version=main#pile), и отображает состояние кластера в TUI.
 
 По умолчанию утилита автоматически выполняет failover отказавших частей кластера:
 * переводит в режим `DISCONNECTED`
@@ -25,7 +25,12 @@ pip3 install textual requests pyyaml
 
 Пример использования:
 ```
-./skipper.py -e <EXAMPLE.COM> --cluster ydb-test-bridge --tui
+./skipper.py -e <EXAMPLE.COM> -s ~/ydb-test-bridge-state.json --cluster ydb-test-bridge --tui
+```
+
+Пример с дополнительными параметрами аутентификации:
+```
+./skipper.py --ydb-auth-opts "--user suser --password-file password.txt" -e <EXAMPLE.COM> -s ~/ydb-test-bridge-state.json --cluster ydb-test-bridge --tui
 ```
 
 ![Import](img/skipper_demo.gif)
@@ -35,11 +40,11 @@ pip3 install textual requests pyyaml
 | Параметр | По умолчанию | Описание |
 |---|---|---|
 | `--endpoint` | — | Хост YDB для получения информации о кластере. |
+| `--state` | — | Путь к файлу, где skipper хранит свой стейт. |
 | `--ydb` | из PATH | Путь к исполняемому файлу YDB CLI. |
+| `--ydb-auth-opts` | - | Параметры аутентификации для YDB CLI. |
 | `--disable-auto-failover` | false | Отключить автоматический failover. |
 | `--log-level` | INFO | Уровень логирования: `TRACE`, `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`. |
 | `--cluster` | cluster | Имя кластера для отображения. |
 | `--tui` | false | Включить TUI. |
 | `--tui-refresh` | 1.0 | Интервал обновления TUI в секундах. |
-| `--https` | false | Использовать HTTPS для healthcheck-запросов viewer. |
-

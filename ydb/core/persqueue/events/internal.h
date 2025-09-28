@@ -4,14 +4,13 @@
 
 #include <ydb/core/base/row_version.h>
 #include <ydb/core/protos/pqconfig.pb.h>
-#include <ydb/core/persqueue/blob.h>
-#include <ydb/core/persqueue/blob_refcounter.h>
-#include <ydb/core/persqueue/key.h>
-#include <ydb/core/persqueue/metering_sink.h>
-#include <ydb/core/persqueue/partition_key_range/partition_key_range.h>
-#include <ydb/core/persqueue/percentile_counter.h>
-#include <ydb/core/persqueue/sourceid_info.h>
-#include <ydb/core/persqueue/write_id.h>
+#include <ydb/core/persqueue/common/blob_refcounter.h>
+#include <ydb/core/persqueue/common/key.h>
+#include <ydb/core/persqueue/common/metering.h>
+#include <ydb/core/persqueue/public/partition_key_range/partition_key_range.h>
+#include <ydb/core/persqueue/public/counters/percentile_counter.h>
+#include <ydb/core/persqueue/common/sourceid_info.h>
+#include <ydb/core/persqueue/public/write_id.h>
 #include <ydb/core/tablet/tablet_counters.h>
 #include <ydb/library/persqueue/topic_parser/topic_parser.h>
 
@@ -59,20 +58,11 @@ namespace NPQ {
         TString Value;
         bool Cached;
         TKey Key;
-        ui64 CreationUnixTime = 0;
+        ui64 CreationUnixTime;
 
         TRequestedBlob() = delete;
 
-        TRequestedBlob(ui64 offset, ui16 partNo, ui32 count, ui16 internalPartsCount, ui32 size, TString value, const TKey& key)
-            : Offset(offset)
-            , PartNo(partNo)
-            , Count(count)
-            , InternalPartsCount(internalPartsCount)
-            , Size(size)
-            , Value(value)
-            , Cached(false)
-            , Key(key)
-        {}
+        TRequestedBlob(ui64 offset, ui16 partNo, ui32 count, ui16 internalPartsCount, ui32 size, TString value, const TKey& key, ui64 creationUnixTime);
     };
 
     struct TDataKey {
@@ -550,8 +540,8 @@ struct TEvPQ {
         void Check() const
         {
             //error or empty response(all from cache) or not empty response at all
-            Y_ABORT_UNLESS(Error.HasError() || Blobs.empty() || !Blobs[0].Value.empty(),
-                "Cookie %" PRIu64 " Error code: %" PRIu32 ", blobs count: %" PRIu64, Cookie, Error.ErrorCode, Blobs.size());
+            AFL_ENSURE(Error.HasError() || Blobs.empty() || !Blobs[0].Value.empty())
+                ("Cookie", Cookie)("Error code", NPersQueue::NErrorCode::EErrorCode_Name(Error.ErrorCode))("blobs count", Blobs.size());
         }
 
     private:
@@ -880,11 +870,15 @@ struct TEvPQ {
     };
 
     struct TEvTxCalcPredicateResult : public TEventLocal<TEvTxCalcPredicateResult, EvTxCalcPredicateResult> {
-        TEvTxCalcPredicateResult(ui64 step, ui64 txId, const NPQ::TPartitionId& partition, TMaybe<bool> predicate) :
+        TEvTxCalcPredicateResult(ui64 step, ui64 txId,
+                                 const NPQ::TPartitionId& partition,
+                                 TMaybe<bool> predicate,
+                                 const TString& issueMsg) :
             Step(step),
             TxId(txId),
             Partition(partition),
-            Predicate(predicate)
+            Predicate(predicate),
+            IssueMsg(issueMsg)
         {
         }
 
@@ -892,6 +886,7 @@ struct TEvPQ {
         ui64 TxId;
         NPQ::TPartitionId Partition;
         TMaybe<bool> Predicate;
+        TString IssueMsg;
     };
 
     struct TEvProposePartitionConfig : public TEventLocal<TEvProposePartitionConfig, EvProposePartitionConfig> {
@@ -1148,6 +1143,8 @@ struct TEvPQ {
 
         NPQ::TSourceIdMap SrcIdInfo;
         std::deque<NPQ::TDataKey> BodyKeys;
+        // SourceId->WritenBytes
+        std::vector<std::pair<TString, ui64>> WrittenBytes;
 
         ui64 BytesWrittenTotal;
         ui64 BytesWrittenGrpc;

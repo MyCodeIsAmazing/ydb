@@ -1,6 +1,6 @@
 #include <ydb/core/keyvalue/keyvalue_events.h>
 #include <ydb/core/persqueue/events/internal.h>
-#include <ydb/core/persqueue/partition.h>
+#include <ydb/core/persqueue/pqtablet/partition/partition.h>
 #include <ydb/core/persqueue/ut/common/pq_ut_common.h>
 #include <ydb/core/protos/counters_keyvalue.pb.h>
 #include <ydb/core/protos/pqconfig.pb.h>
@@ -331,7 +331,7 @@ protected:
     NPersQueue::TTopicConverterPtr TopicConverter;
     NKikimrPQ::TPQTabletConfig Config;
 
-    TAutoPtr<TTabletCountersBase> TabletCounters;
+    std::shared_ptr<TTabletCountersBase> TabletCounters;
 
 };
 
@@ -373,7 +373,7 @@ TPartition* TPartitionFixture::CreatePartitionActor(const TPartitionId& id,
     >;
 
     TAutoPtr<TCounters> counters(new TCounters());
-    TabletCounters = counters->GetSecondTabletCounters().Release();
+    TabletCounters.reset(counters->GetSecondTabletCounters().Release());
 
     Config = MakeConfig(config.Version,
                         config.Consumers,
@@ -392,7 +392,7 @@ TPartition* TPartitionFixture::CreatePartitionActor(const TPartitionId& id,
                 id,
                 Ctx->Edge,
                 Ctx->TabletId,
-                *TabletCounters
+                TabletCounters
         ));
     }
     auto samplingControl = Ctx->Runtime->GetAppData(0).TracingConfigurator->GetControl();
@@ -405,7 +405,7 @@ TPartition* TPartitionFixture::CreatePartitionActor(const TPartitionId& id,
                                      "dcId",
                                      false,
                                      Config,
-                                     *TabletCounters,
+                                     TabletCounters,
                                      false,
                                      1,
                                      quoterId,
@@ -1266,6 +1266,8 @@ void TPartitionFixture::TestWriteSubDomainOutOfSpace_DeadlineWork(bool ignoreQuo
 {
     Ctx->Runtime->GetAppData().FeatureFlags.SetEnableTopicDiskSubDomainQuota(true);
     Ctx->Runtime->GetAppData().PQConfig.MutableQuotingConfig()->SetQuotaWaitDurationMs(300);
+    Ctx->Runtime->SetLogPriority( NKikimrServices::PERSQUEUE, NActors::NLog::PRI_DEBUG);
+
     CreatePartition({
                     .Partition=TPartitionId{1},
                     .Begin=0, .End=0,
@@ -1293,10 +1295,9 @@ void TPartitionFixture::TestWriteSubDomainOutOfSpace_DeadlineWork(bool ignoreQuo
         return cookie == e.Cookie;
     };
 
-    TString data = "data for write";
-
     // First message will be processed because used storage 0 and limit 0. That is, the limit is not exceeded.
-    SendWrite(++cookie, messageNo, ownerCookie, (messageNo + 1) * 100, data, ignoreQuotaDeadline);
+    TString data0 = "data for write 0";
+    SendWrite(++cookie, messageNo, ownerCookie, (messageNo + 1) * 100, data0, ignoreQuotaDeadline);
     messageNo++;
 
     WaitKeyValueRequest(kvCookie); // the partition saves the TEvPQ::TEvWrite event
@@ -1308,7 +1309,8 @@ void TPartitionFixture::TestWriteSubDomainOutOfSpace_DeadlineWork(bool ignoreQuo
     }
 
     // Second message will not be processed because the limit is exceeded.
-    SendWrite(++cookie, messageNo, ownerCookie, (messageNo + 1) * 100, data, ignoreQuotaDeadline);
+    TString data1 = "data for write 1";
+    SendWrite(++cookie, messageNo, ownerCookie, (messageNo + 1) * 100, data1, ignoreQuotaDeadline);
     messageNo++;
 
     {
@@ -2559,25 +2561,16 @@ Y_UNIT_TEST_F(ReserveSubDomainOutOfSpace, TPartitionFixture)
 
 Y_UNIT_TEST_F(WriteSubDomainOutOfSpace, TPartitionFixture)
 {
-    // TODO(abcdef): temporarily deleted
-    return;
-
     TestWriteSubDomainOutOfSpace_DeadlineWork(false);
 }
 
 Y_UNIT_TEST_F(WriteSubDomainOutOfSpace_DisableExpiration, TPartitionFixture)
 {
-    // TODO(abcdef): temporarily deleted
-    return;
-
     TestWriteSubDomainOutOfSpace(TDuration::MilliSeconds(0), false);
 }
 
 Y_UNIT_TEST_F(WriteSubDomainOutOfSpace_IgnoreQuotaDeadline, TPartitionFixture)
 {
-    // TODO(abcdef): temporarily deleted
-    return;
-
     TestWriteSubDomainOutOfSpace_DeadlineWork(true);
 }
 

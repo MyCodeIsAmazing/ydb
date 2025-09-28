@@ -2,7 +2,7 @@
 #include "ydb_tools_infer.h"
 
 #define INCLUDE_YDB_INTERNAL_H
-#include <ydb/public/sdk/cpp/src/client/impl/ydb_internal/logger/log.h>
+#include <ydb/public/sdk/cpp/src/client/impl/internal/logger/log.h>
 #undef INCLUDE_YDB_INTERNAL_H
 
 #include <ydb/public/lib/ydb_cli/common/normalize_path.h>
@@ -225,6 +225,9 @@ void TCommandRestore::Config(TConfig& config) {
         " instead of silently skipping its removal.")
         .StoreTrue(&VerifyExistence);
 
+    config.Opts->AddLongOption("retries", "Max retry count for every request.")
+        .DefaultValue(10).StoreResult(&Retries);
+
     config.Opts->MutuallyExclusive("bandwidth", "rps");
     config.Opts->MutuallyExclusive("import-data", "bulk-upsert");
     config.Opts->MutuallyExclusive("import-data", "upload-batch-rows");
@@ -247,7 +250,8 @@ int TCommandRestore::Run(TConfig& config) {
         .SavePartialResult(SavePartialResult)
         .RowsPerRequest(NYdb::SizeFromString(RowsPerRequest))
         .Replace(Replace)
-        .VerifyExistence(VerifyExistence);
+        .VerifyExistence(VerifyExistence)
+        .MaxRetries(Retries);
 
     if (InFlight) {
         settings.MaxInFlight(InFlight);

@@ -69,6 +69,16 @@ bool FormatLangVersion(TLangVersion ver, TLangVersionBuffer& buffer, TStringBuf&
     return true;
 }
 
+TMaybe<TString> FormatLangVersion(TLangVersion ver) {
+    TLangVersionBuffer buffer;
+    TStringBuf result;
+    if (!FormatLangVersion(ver, buffer, result)) {
+        return Nothing();
+    }
+
+    return TString(result);
+}
+
 TLangVersion GetMaxReleasedLangVersion() {
     return MaxReleasedLangVersion;
 }
@@ -92,6 +102,12 @@ bool IsBackwardCompatibleFeatureAvailable(TLangVersion currentVer, TLangVersion 
         return IsAvailableLangVersion(featureVer, GetMaxReleasedLangVersion());
     case EBackportCompatibleFeaturesMode::None:
         return IsAvailableLangVersion(featureVer, currentVer);
+    }
+}
+
+void EnumerateLangVersions(const std::function<void(TLangVersion)>& callback) {
+    for (size_t i = 0; i < Y_ARRAY_SIZE(Versions); ++i) {
+        callback(MakeLangVersion(Versions[i].first, Versions[i].second));
     }
 }
 

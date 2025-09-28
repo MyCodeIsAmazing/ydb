@@ -83,6 +83,9 @@ sql_stmt_core:
   | create_streaming_query_stmt
   | alter_streaming_query_stmt
   | drop_streaming_query_stmt
+  | create_secret_stmt
+  | alter_secret_stmt
+  | drop_secret_stmt
 ;
 
 expr:
@@ -799,9 +802,22 @@ alter_table_alter_changefeed: ALTER CHANGEFEED an_id changefeed_alter_settings;
 alter_table_drop_changefeed: DROP CHANGEFEED an_id;
 alter_table_alter_index: ALTER INDEX an_id alter_table_alter_index_action;
 
-column_schema: an_id_schema type_name_or_bind family_relation? opt_column_constraints;
+column_schema: an_id_schema type_name_or_bind column_option_list;
+
+column_option_list: column_option_list_space | column_option_list_comma;
+column_option_list_space: (column_option)*;
+column_option_list_comma: LPAREN column_option (COMMA column_option)* RPAREN;
+
+column_option:
+    family_relation
+    | nullability
+    | default_value
+    ;
+
 family_relation: FAMILY an_id;
-opt_column_constraints: (NOT? NULL)? (DEFAULT expr)?;
+nullability: NOT? NULL;  
+default_value: DEFAULT expr;
+
 column_order_by_specification: an_id (ASC | DESC)?;
 
 table_constraint:
@@ -1152,6 +1168,23 @@ alter_sequence_action:
 ;
 
 show_create_table_stmt: SHOW CREATE (TABLE | VIEW) simple_table_ref;
+
+create_secret_stmt: CREATE SECRET object_ref
+    with_secret_settings
+;
+with_secret_settings: WITH LPAREN secret_setting_entry (COMMA secret_setting_entry)* RPAREN;
+secret_setting_entry: an_id EQUALS secret_setting_value;
+secret_setting_value:
+      STRING_VALUE
+    | bool_value
+    | bind_parameter
+;
+
+alter_secret_stmt: ALTER SECRET object_ref
+    with_secret_settings
+;
+
+drop_secret_stmt: DROP SECRET object_ref;
 
 // Special rules that allow to use certain keywords as identifiers.
 identifier: ID_PLAIN | ID_QUOTED;
@@ -1531,6 +1564,7 @@ keyword_as_compat:
   // | SAMPLE
   | SAVEPOINT
   | SECONDS
+  | SECRET
   | SEEK
   // | SEMI
   | SETS
@@ -1767,6 +1801,7 @@ keyword_compat: (
   | SETS
   | SHOW
   | TSKIP
+  | SECRET
   | SEQUENCE
   | SOURCE
   | START
@@ -2148,6 +2183,7 @@ SET: S E T;
 SETS: S E T S;
 SHOW: S H O W;
 TSKIP: S K I P;
+SECRET: S E C R E T;
 SEQUENCE: S E Q U E N C E;
 SOURCE: S O U R C E;
 START: S T A R T;

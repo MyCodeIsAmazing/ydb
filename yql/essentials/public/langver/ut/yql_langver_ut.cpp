@@ -34,6 +34,13 @@ Y_UNIT_TEST_SUITE(TLangVerTests) {
         UNIT_ASSERT_VALUES_EQUAL(b[s.Size()], 0);
     }
 
+    Y_UNIT_TEST(FormatString) {
+        UNIT_ASSERT(!FormatLangVersion(MakeLangVersion(99999, 1)));
+        UNIT_ASSERT(!FormatLangVersion(MakeLangVersion(999, 1)));
+        UNIT_ASSERT_VALUES_EQUAL(FormatLangVersion(MakeLangVersion(2025, 1)), "2025.01");
+        UNIT_ASSERT_VALUES_EQUAL(FormatLangVersion(MakeLangVersion(2025, 12)), "2025.12");
+    }
+
     Y_UNIT_TEST(Deprecated) {
         UNIT_ASSERT(IsDeprecatedLangVersion(MakeLangVersion(2025,2),MakeLangVersion(2027,1)));
         UNIT_ASSERT(!IsDeprecatedLangVersion(MakeLangVersion(2025,3),MakeLangVersion(2025,1)));
@@ -89,6 +96,34 @@ Y_UNIT_TEST_SUITE(TLangVerTests) {
             EBackportCompatibleFeaturesMode::None));
         UNIT_ASSERT(!IsBackwardCompatibleFeatureAvailable(MinLangVersion, GetMaxLangVersion(),
             EBackportCompatibleFeaturesMode::None));
+    }
+
+    Y_UNIT_TEST(EnumerateAllValid) {
+        const auto max = GetMaxLangVersion();
+        const auto maxReleased = GetMaxReleasedLangVersion();
+        bool hasMin = false;
+        bool hasMax = false;
+        bool hasMaxReleased = false;
+        EnumerateLangVersions([&](TLangVersion ver) {
+            UNIT_ASSERT(IsValidLangVersion(ver));
+            UNIT_ASSERT(ver >= MinLangVersion);
+            UNIT_ASSERT(ver <= max);
+            if (ver == MinLangVersion) {
+                hasMin = true;
+            }
+
+            if (ver == max) {
+                hasMax = true;
+            }
+
+            if (ver == maxReleased) {
+                hasMaxReleased = true;
+            }
+        });
+
+        UNIT_ASSERT(hasMin);
+        UNIT_ASSERT(hasMax);
+        UNIT_ASSERT(hasMaxReleased);
     }
 }
 
