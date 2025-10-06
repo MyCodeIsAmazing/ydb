@@ -68,6 +68,13 @@ TPDisk::TPDisk(std::shared_ptr<TPDiskCtx> pCtx, const TIntrusivePtr<TPDiskConfig
     UseNoopSchedulerHDD = TControlWrapper(Cfg->UseNoopScheduler, 0, 1);
     ChunkBaseLimitPerMille = TControlWrapper(0, 0, 130);  // 0 means ChunkBaseLimit isn't configured via ICB
 
+    // Override PDiskConfig.SpaceColorBorder:
+    // 0 - overriding disabled, respect PDiskConfig value
+    // 1 - LightYellowMove
+    // 2 - YellowStop
+    SemiStrictSpaceIsolation = TControlWrapper(0, 0, 2);
+    SemiStrictSpaceIsolationCached = 0;
+
     if (Cfg->SectorMap) {
         auto diskModeParams = Cfg->SectorMap->GetDiskModeParams();
         if (diskModeParams) {
@@ -1573,13 +1580,17 @@ void TPDisk::WhiteboardReport(TWhiteboardReport &whiteboardReport) {
         pdiskState.SetPDiskId(PCtx->PDiskId);
         pdiskState.SetPath(Cfg->GetDevicePath());
         pdiskState.SetSerialNumber(Cfg->ExpectedSerial);
-        pdiskState.SetAvailableSize(availableSize);
-        pdiskState.SetTotalSize(totalSize);
         const auto& state = static_cast<NKikimrBlobStorage::TPDiskState::E>(Mon.PDiskState->Val());
         pdiskState.SetState(state);
-        pdiskState.SetSystemSize(Format.ChunkSize * (Keeper.GetOwnerHardLimit(OwnerSystemLog) + Keeper.GetOwnerHardLimit(OwnerSystemReserve)));
-        pdiskState.SetLogUsedSize(Format.ChunkSize * (Keeper.GetOwnerHardLimit(OwnerCommonStaticLog) - Keeper.GetOwnerFree(OwnerCommonStaticLog, {})));
-        pdiskState.SetLogTotalSize(Format.ChunkSize * Keeper.GetOwnerHardLimit(OwnerCommonStaticLog));
+        
+        // Only report size information when PDisk is not in error state
+        if (*Mon.PDiskBriefState != TPDiskMon::TPDisk::Error) {
+            pdiskState.SetAvailableSize(availableSize);
+            pdiskState.SetTotalSize(totalSize);
+            pdiskState.SetSystemSize(Format.ChunkSize * (Keeper.GetOwnerHardLimit(OwnerSystemLog) + Keeper.GetOwnerHardLimit(OwnerSystemReserve)));
+            pdiskState.SetLogUsedSize(Format.ChunkSize * (Keeper.GetOwnerHardLimit(OwnerCommonStaticLog) - Keeper.GetOwnerFree(OwnerCommonStaticLog, {})));
+            pdiskState.SetLogTotalSize(Format.ChunkSize * Keeper.GetOwnerHardLimit(OwnerCommonStaticLog));
+        }
         pdiskState.SetNumActiveSlots(GetNumActiveSlots());
         pdiskState.SetSlotSizeInUnits(Cfg->SlotSizeInUnits);
         if (ExpectedSlotCount) {
@@ -2882,6 +2893,7 @@ bool TPDisk::Initialize() {
             TControlBoard::RegisterSharedControl(UseNoopSchedulerHDD, icb->PDiskControls.UseNoopSchedulerHDD);
             TControlBoard::RegisterSharedControl(UseNoopSchedulerSSD, icb->PDiskControls.UseNoopSchedulerSSD);
             REGISTER_LOCAL_CONTROL(ChunkBaseLimitPerMille);
+            TControlBoard::RegisterSharedControl(SemiStrictSpaceIsolation, icb->PDiskControls.SemiStrictSpaceIsolation);
 
             if (Cfg->SectorMap) {
                 auto diskModeParams = Cfg->SectorMap->GetDiskModeParams();
@@ -3864,6 +3876,13 @@ void TPDisk::Update() {
             while (!ForsetiScheduler.IsEmpty()) {
                 GetJobsFromForsetti();
             }
+        }
+
+        using TColor = NKikimrBlobStorage::TPDiskSpaceColor;
+        if (i64 currentIsolation = SemiStrictSpaceIsolation; currentIsolation != SemiStrictSpaceIsolationCached) {
+            TColor::E colorBorder = GetColorBorderIcb();
+            Keeper.SetColorBorder(colorBorder);
+            SemiStrictSpaceIsolationCached = currentIsolation;
         }
 
         // Switch the scheduler when possible

@@ -546,6 +546,7 @@ config:
                 ADD_ICB_CONTROL(DSProxyControls.MaxNumOfSlowDisksSSD, 2, 1, 2, Settings.MaxNumOfSlowDisks);
 
                 ADD_ICB_CONTROL(VDiskControls.EnableDeepScrubbing, false, false, true, Settings.EnableDeepScrubbing);
+                ADD_ICB_CONTROL(VDiskControls.HullCompThrottlerBytesRate, 0, 0, 10737418240, 0);
 #undef ADD_ICB_CONTROL
 
                 {
@@ -1114,7 +1115,7 @@ config:
             std::unique_ptr<typename std::invoke_result_t<TFactory>::element_type> ev(factory());
             Runtime->Send(new IEventHandle(actorId, edge, ev.release(), IEventHandle::FlagTrackDelivery), edge.NodeId());
             auto res = Runtime->WaitForEdgeActorEvent({edge});
-            if (auto *msg = res->CastAsLocal<TEvents::TEvUndelivered>()) {
+            if (res->CastAsLocal<TEvents::TEvUndelivered>()) {
                 UNIT_ASSERT(checkUndelivered);
                 Sim(TDuration::Seconds(5));
             } else {

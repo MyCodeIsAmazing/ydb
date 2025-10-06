@@ -153,6 +153,13 @@ enum EOperationSortDirection
     OSD_FUTURE = 2;
 }
 
+enum EListQueriesSortOrder
+{
+    LQSO_CURSOR = 0;
+    LQSO_ASCENDING = 1;
+    LQSO_DESCENDING = 2;
+}
+
 enum EJobType
 {
     JT_UNKNOWN = 1000;
@@ -2229,12 +2236,9 @@ message TReqPartitionTables
 
     optional bool enable_cookies = 10;
 
-    // COMPAT(apollo1321): Remove in 25.2 release.
-    optional bool use_new_slicing_implementation_in_unordered_pool = 12 [default=true];
-
     optional TTransactionalOptions transactional_options = 100;
 
-    reserved 11;
+    reserved 11, 12;
 }
 
 message TMultiTablePartition
@@ -2574,6 +2578,8 @@ message TReqListJobs
     optional bool with_interruption_info = 26;
 
     optional NYT.NYTree.NProto.TAttributeFilter attributes = 27;
+
+    optional string monitoring_descriptor = 28;
 
     optional TMasterReadOptions master_read_options = 102;
 }
@@ -3593,6 +3599,8 @@ message TReqListQueries
     optional NYT.NYTree.NProto.TAttributeFilter attributes = 11;
     optional bool search_by_token_prefix = 12 [default = false];
     optional bool use_full_text_search = 13 [default = true];
+    optional EListQueriesSortOrder sort_order = 14 [default = LQSO_CURSOR];
+    optional bool tutorial_filter = 15 [default = false];
 }
 
 message TRspListQueries
@@ -3644,7 +3652,7 @@ message TRspGetQueryTrackerInfo
 
 ////////////////////////////////////////////////////////////////////////////////
 
-message TReqGetDeclaredParametersInfo
+message TReqGetQueryDeclaredParametersInfo
 {
     required string query_tracker_stage = 1;
     required string query = 2;
@@ -3652,7 +3660,7 @@ message TReqGetDeclaredParametersInfo
     optional bytes settings = 4; // YSON
 }
 
-message TRspGetDeclaredParametersInfo
+message TRspGetQueryDeclaredParametersInfo
 {
     required bytes declared_parameters_info = 1; // YSON
 }

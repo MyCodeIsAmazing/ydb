@@ -5378,6 +5378,7 @@ void TSchemeShard::StateWork(STFUNC_SIG) {
         HFuncTraced(TEvDataShard::TEvPrefixKMeansResponse, Handle);
         HFuncTraced(TEvIndexBuilder::TEvUploadSampleKResponse, Handle);
         HFuncTraced(TEvDataShard::TEvValidateUniqueIndexResponse, Handle);
+        HFuncTraced(TEvDataShard::TEvBuildFulltextIndexResponse, Handle);
         // } // NIndexBuilder
 
         //namespace NCdcStreamScan {
@@ -8275,10 +8276,10 @@ void TSchemeShard::Handle(TEvPrivate::TEvSendBaseStatsToSA::TPtr&, const TActorC
 
 void TSchemeShard::InitializeStatistics(const TActorContext& ctx) {
     ResolveSA();
-    // since columnshard statistics is now sent once in a minute,
-    // we expect that in most cases we will gather full stats
-    // before sending them to StatisticsAggregator
-    ctx.Schedule(TDuration::Seconds(120), new TEvPrivate::TEvSendBaseStatsToSA());
+    // Give table shards some time to report statistics. This is not required for correctness,
+    // but if we tried to send the statistics right away, info for all paths would probably
+    // be incomplete.
+    ctx.Schedule(TDuration::Seconds(30), new TEvPrivate::TEvSendBaseStatsToSA());
 }
 
 void TSchemeShard::ResolveSA() {
@@ -8352,7 +8353,7 @@ TDuration TSchemeShard::SendBaseStatsToSA() {
     }
 
     int count = 0;
-    bool areAllStatsFull = true;
+    int incompleteCount = 0;
 
     NKikimrStat::TSchemeShardStats record;
     for (const auto& [pathId, tableInfo] : Tables) {
@@ -8368,9 +8369,11 @@ TDuration TSchemeShard::SendBaseStatsToSA() {
         entry->SetBytesSize(areStatsFull ? aggregated.DataSize : 0);
         entry->SetIsColumnTable(false);
         entry->SetAreStatsFull(areStatsFull);
-        areAllStatsFull = areAllStatsFull && areStatsFull;
 
         ++count;
+        if (!areStatsFull) {
+            ++incompleteCount;
+        }
     }
 
     auto columnTablesPathIds = ColumnTables.GetAllPathIds();
@@ -8400,9 +8403,11 @@ TDuration TSchemeShard::SendBaseStatsToSA() {
         entry->SetBytesSize(areStatsFull ? aggregated.DataSize : 0);
         entry->SetIsColumnTable(true);
         entry->SetAreStatsFull(areStatsFull);
-        areAllStatsFull = areAllStatsFull && areStatsFull;
 
         ++count;
+        if (!areStatsFull) {
+            ++incompleteCount;
+        }
     }
 
     if (!count) {
@@ -8412,7 +8417,7 @@ TDuration TSchemeShard::SendBaseStatsToSA() {
         return TDuration::Seconds(30);
     }
 
-    record.SetAreAllStatsFull(areAllStatsFull);
+    record.SetAreAllStatsFull(incompleteCount == 0);
 
     TString stats;
     Y_PROTOBUF_SUPPRESS_NODISCARD record.SerializeToString(&stats);
@@ -8426,6 +8431,7 @@ TDuration TSchemeShard::SendBaseStatsToSA() {
     LOG_DEBUG_S(TlsActivationContext->AsActorContext(), NKikimrServices::STATISTICS,
         "SendBaseStatsToSA()"
         << ", path count: " << count
+        << ", paths with incomplete stats: " << incompleteCount
         << ", at schemeshard: " << TabletID());
 
     if (IsServerlessDomain(SubDomains.at(RootPathId()))) {

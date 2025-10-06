@@ -318,10 +318,23 @@ void TListQueriesCommand::Register(TRegistrar registrar)
             return command->Options.SearchByTokenPrefix;
         })
         .Optional(/*init*/ false);
+
     registrar.ParameterWithUniversalAccessor<bool>(
         "use_full_text_search",
         [] (TThis* command) -> auto& {
             return command->Options.UseFullTextSearch;
+        })
+        .Optional(/*init*/ false);
+    registrar.ParameterWithUniversalAccessor<bool>(
+        "tutorial_filter",
+        [] (TThis* command) -> auto& {
+            return command->Options.TutorialFilter;
+        })
+        .Optional(/*init*/ false);
+    registrar.ParameterWithUniversalAccessor<EListQueriesSortOrder>(
+        "sort_order",
+        [] (TThis* command) -> auto& {
+            return command->Options.SortOrder;
         })
         .Optional(/*init*/ false);
 }
@@ -430,7 +443,7 @@ void TGetQueryTrackerInfoCommand::DoExecute(ICommandContextPtr context)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void TGetDeclaredParametersInfoCommand::Register(TRegistrar registrar)
+void TGetQueryDeclaredParametersInfoCommand::Register(TRegistrar registrar)
 {
     registrar.ParameterWithUniversalAccessor<std::string>(
         "stage",
@@ -461,9 +474,9 @@ void TGetDeclaredParametersInfoCommand::Register(TRegistrar registrar)
         .Optional(/*init*/ false);
 }
 
-void TGetDeclaredParametersInfoCommand::DoExecute(ICommandContextPtr context)
+void TGetQueryDeclaredParametersInfoCommand::DoExecute(ICommandContextPtr context)
 {
-    auto result = WaitFor(context->GetClient()->GetDeclaredParametersInfo(Options))
+    auto result = WaitFor(context->GetClient()->GetQueryDeclaredParametersInfo(Options))
         .ValueOrThrow();
 
     context->ProduceOutputValue(BuildYsonStringFluently()
