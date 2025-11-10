@@ -269,6 +269,7 @@ private:
         auto range = ParentRange(parent);
         auto arena = MakeIntrusive<NActors::TProtoArenaHolder>();
         auto src = arena->Allocate<NKikimrTxDataShard::TKqpReadRangesSourceSettings>();
+        src->SetDatabase(Settings.GetDatabase());
         *src->MutableTable() = Settings.GetLevelTable();
         range.Serialize(*src->MutableFullRange());
         src->SetDataFormat(NKikimrDataEvents::FORMAT_CELLVEC);
@@ -325,6 +326,9 @@ private:
     }
 
     void HandleRead(TEvNewAsyncInputDataArrived::TPtr) {
+        if (!ReadActorInput) {
+            return;
+        }
         TMaybe<TInstant> watermark;
         ui64 freeSpace = 32*1024*1024; // FIXME The value doesn't really matter, but where to take it from?
         NKikimr::NMiniKQL::TUnboxedValueBatch rows;

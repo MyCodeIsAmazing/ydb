@@ -11,6 +11,7 @@
 #include <yql/essentials/ast/yql_ast.h>
 #include <yql/essentials/ast/yql_expr.h>
 #include <yql/essentials/core/yql_expr_optimize.h>
+#include <yql/essentials/public/udf/udf_data_type.h>
 
 #include <library/cpp/json/json_reader.h>
 
@@ -72,6 +73,255 @@ Y_UNIT_TEST_SUITE(KqpQuery) {
 
         TKqpCounters counters(kikimr.GetTestServer().GetRuntime()->GetAppData().Counters);
         UNIT_ASSERT_VALUES_EQUAL(counters.RecompileRequestGet()->Val(), 1);
+    }
+
+    Y_UNIT_TEST_TWIN(ExtendedTimeOutOfBounds, BulkUpsert) {
+        auto settings = TKikimrSettings().SetWithSampleTables(false);
+        TKikimrRunner kikimr(settings);
+
+        auto queryClient = kikimr.GetQueryClient();
+        auto tableClient = kikimr.GetTableClient();
+
+        {
+            const std::string query = R"(
+                CREATE TABLE `/Root/TimeTable` (
+                    Key UInt32 NOT NULL,
+                    V_Date32 Date32,
+                    V_Datetime64 Datetime64,
+                    V_Timestamp64 Timestamp64,
+                    V_Interval64 Interval64,
+                    PRIMARY KEY (Key)
+                );
+            )";
+            auto result = queryClient.ExecuteQuery(query, NQuery::TTxControl::NoTx()).ExtractValueSync();
+            UNIT_ASSERT_C(result.IsSuccess(), result.GetIssues().ToString());
+        }
+
+        auto fUpsertAndCheck = [&]<typename T>(ui32 key, T value, bool success) {
+            std::string colName;
+            if (BulkUpsert) {
+                TValueBuilder rows;
+                rows.BeginList();
+                rows.AddListItem().BeginStruct().AddMember("Key").Uint32(key);
+                if constexpr (std::is_same_v<T, TWideDays>) {
+                    rows.AddMember("V_Date32").Date32(std::chrono::sys_time<TWideDays>(TWideDays(value)));
+                    colName = "V_Date32";
+                } else if constexpr (std::is_same_v<T, TWideSeconds>) {
+                    rows.AddMember("V_Datetime64").Datetime64(std::chrono::sys_time<TWideSeconds>(TWideSeconds(value)));
+                    colName = "V_Datetime64";
+                } else if constexpr (std::is_same_v<T, TWideMicroseconds>) {
+                    rows.AddMember("V_Timestamp64").Timestamp64(std::chrono::sys_time<TWideMicroseconds>(TWideMicroseconds(value)));
+                    colName = "V_Timestamp64";
+                } else if constexpr (std::is_same_v<T, i64>) {
+                    rows.AddMember("V_Interval64").Interval64(TWideMicroseconds(value));
+                    colName = "V_Interval64";
+                } else {
+                    UNIT_ASSERT_C(false, "Unsupported type");
+                }
+                rows.EndStruct().EndList();
+
+                auto result = tableClient.BulkUpsert("/Root/TimeTable", rows.Build()).GetValueSync();
+                UNIT_ASSERT_VALUES_EQUAL_C(result.IsSuccess(), success, result.GetIssues().ToString());
+            } else {
+                auto params = std::move(TParamsBuilder().AddParam("$key").Uint32(key).Build());
+                if constexpr (std::is_same_v<T, TWideDays>) {
+                    params.AddParam("$param").Date32(std::chrono::sys_time<TWideDays>(TWideDays(value))).Build();
+                    colName = "V_Date32";
+                } else if constexpr (std::is_same_v<T, TWideSeconds>) {
+                    params.AddParam("$param").Datetime64(std::chrono::sys_time<TWideSeconds>(TWideSeconds(value))).Build();
+                    colName = "V_Datetime64";
+                } else if constexpr (std::is_same_v<T, TWideMicroseconds>) {
+                    params.AddParam("$param").Timestamp64(std::chrono::sys_time<TWideMicroseconds>(TWideMicroseconds(value))).Build();
+                    colName = "V_Timestamp64";
+                } else if constexpr (std::is_same_v<T, i64>) {
+                    params.AddParam("$param").Interval64(TWideMicroseconds(value)).Build();
+                    colName = "V_Interval64";
+                } else {
+                    UNIT_ASSERT_C(false, "Unsupported type");
+                }
+
+                auto result = queryClient.ExecuteQuery(Sprintf(R"(
+                    UPSERT INTO `/Root/TimeTable` (Key, %s) VALUES ($key, $param);
+                )", colName.c_str()), NQuery::TTxControl::NoTx(), params.Build()).ExtractValueSync();
+                UNIT_ASSERT_VALUES_EQUAL_C(result.IsSuccess(), success, result.GetIssues().ToString());
+            }
+        };
+
+        {
+            // Date32
+            fUpsertAndCheck(1, TWideDays(0), /* success */ true); // Basic
+            fUpsertAndCheck(2, TWideDays(NYql::NUdf::MIN_DATE32), /* success */ true); // Min is inclusive
+            fUpsertAndCheck(3, TWideDays(NYql::NUdf::MAX_DATE32), /* success */ true); // Max is inclusive
+            fUpsertAndCheck(4, TWideDays(NYql::NUdf::MIN_DATE32 - 1), /* success */ false); // Out of bounds
+            fUpsertAndCheck(5, TWideDays(NYql::NUdf::MAX_DATE32 + 1), /* success */ false); // Out of bounds
+        }
+
+        {
+            // Datetime64
+            fUpsertAndCheck(11, TWideSeconds(0), /* success */ true); // Basic
+            fUpsertAndCheck(12, TWideSeconds(NYql::NUdf::MIN_DATETIME64), /* success */ true); // Min is inclusive
+            fUpsertAndCheck(13, TWideSeconds(NYql::NUdf::MAX_DATETIME64), /* success */ true); // Max is inclusive
+            fUpsertAndCheck(14, TWideSeconds(NYql::NUdf::MIN_DATETIME64 - 1), /* success */ false); // Out of bounds
+            fUpsertAndCheck(15, TWideSeconds(NYql::NUdf::MAX_DATETIME64 + 1), /* success */ false); // Out of bounds
+        }
+
+        {
+            // Timestamp64
+            fUpsertAndCheck(21, TWideMicroseconds(0), /* success */ true); // Basic
+            fUpsertAndCheck(22, TWideMicroseconds(NYql::NUdf::MIN_TIMESTAMP64), /* success */ true); // Min is inclusive
+            fUpsertAndCheck(23, TWideMicroseconds(NYql::NUdf::MAX_TIMESTAMP64), /* success */ true); // Max is inclusive
+            fUpsertAndCheck(24, TWideMicroseconds(NYql::NUdf::MIN_TIMESTAMP64 - 1), /* success */ false); // Out of bounds
+            fUpsertAndCheck(25, TWideMicroseconds(NYql::NUdf::MAX_TIMESTAMP64 + 1), /* success */ false); // Out of bounds
+        }
+
+        {
+            // Interval64
+            fUpsertAndCheck(31, static_cast<i64>(0), /* success */ true); // Basic
+            fUpsertAndCheck(32, NYql::NUdf::MAX_INTERVAL64, /* success */ true); // Max is inclusive
+            fUpsertAndCheck(33, -NYql::NUdf::MAX_INTERVAL64, /* success */ true); // -Max is inclusive
+            fUpsertAndCheck(34, NYql::NUdf::MAX_INTERVAL64 + 1, /* success */ false); // Out of bounds
+            fUpsertAndCheck(35, -(NYql::NUdf::MAX_INTERVAL64 + 1), /* success */ false); // Out of bounds
+        }
+    }
+
+    Y_UNIT_TEST_TWIN(DecimalOutOfPrecisionBulk, EnableParameterizedDecimal) {
+        TKikimrSettings serverSettings;
+        serverSettings.FeatureFlags.SetEnableParameterizedDecimal(EnableParameterizedDecimal);
+        serverSettings.WithSampleTables = false;
+
+        TKikimrRunner kikimr(serverSettings);
+        auto client = kikimr.GetQueryClient();
+
+        {
+            auto ddlResult = client.ExecuteQuery(R"(
+                CREATE TABLE DecTest (
+                    Key Int32 NOT NULL,
+                    Value Decimal(22, 9) NOT NULL,
+                    PRIMARY KEY (Key)
+                );
+            )", NYdb::NQuery::TTxControl::NoTx()).ExtractValueSync();
+            UNIT_ASSERT_C(ddlResult.IsSuccess(), ddlResult.GetIssues().ToString());
+        }
+
+        // 10000000000000 in Decimal(35, 9), invalid for Decimal(22, 9)
+        Ydb::Value value;
+        value.set_low_128(1864712049423024128);
+        value.set_high_128(542);
+        auto invalidValue = TDecimalValue(value, NYdb::TDecimalType(22, 9));
+
+        {
+            auto db = kikimr.GetTableClient();
+            auto session = db.CreateSession().GetValueSync().GetSession();
+
+            NYdb::TValueBuilder rows;
+            rows.BeginList();
+            rows.AddListItem()
+                .BeginStruct()
+                .AddMember("Key").Int32(1)
+                .AddMember("Value").Decimal(TDecimalValue("10", 22, 9))
+                .EndStruct();
+            rows.AddListItem()
+                .BeginStruct()
+                .AddMember("Key").Int32(2)
+                .AddMember("Value").Decimal(invalidValue)
+                .EndStruct();
+            rows.AddListItem()
+                .BeginStruct()
+                .AddMember("Key").Int32(3)
+                .AddMember("Value").Decimal(TDecimalValue("10000000000000", 22, 9))
+                .EndStruct();
+            rows.EndList();
+
+            auto resultUpsert = db.BulkUpsert("/Root/DecTest", rows.Build()).GetValueSync();
+            // TODO: Plan A, upsert should fail as provided value is invalid for given type.
+            UNIT_ASSERT_C(!resultUpsert.IsSuccess(), resultUpsert.GetIssues().ToString());
+
+            auto tableYson = ReadTableToYson(session, "/Root/DecTest");
+            // TODO: Plan B, value for key 2 should be inf, as provided value is out of range
+            // for given type.
+            CompareYson(R"([])", tableYson);
+        }
+    }
+
+    Y_UNIT_TEST_QUAD(DecimalOutOfPrecision, UseOltpSink, EnableParameterizedDecimal) {
+        TKikimrSettings serverSettings;
+        serverSettings.AppConfig.MutableTableServiceConfig()->SetEnableOltpSink(UseOltpSink);
+        serverSettings.FeatureFlags.SetEnableParameterizedDecimal(EnableParameterizedDecimal);
+        serverSettings.WithSampleTables = false;
+
+        TKikimrRunner kikimr(serverSettings);
+        auto client = kikimr.GetQueryClient();
+
+        {
+            auto ddlResult = client.ExecuteQuery(Sprintf(R"(
+                CREATE TABLE DecTest (
+                    Key Int32 NOT NULL,
+                    Value Decimal(22, 9),
+                   %s
+                    PRIMARY KEY (Key)
+                );
+            )", EnableParameterizedDecimal ? " ValueLarge Decimal(35, 9), " : ""), NYdb::NQuery::TTxControl::NoTx()).ExtractValueSync();
+            UNIT_ASSERT_C(ddlResult.IsSuccess(), ddlResult.GetIssues().ToString());
+        }
+
+        // 10000000000000 in Decimal(35, 9), invalid for Decimal(22, 9)
+        Ydb::Value value;
+        value.set_low_128(1864712049423024128);
+        value.set_high_128(542);
+        auto invalidValue = TDecimalValue(value, NYdb::TDecimalType(22, 9));
+
+        auto validValue = TDecimalValue(value, NYdb::TDecimalType(35, 9));
+
+        {
+            auto params = TParamsBuilder()
+                .AddParam("$value").Decimal(invalidValue).Build()
+                .Build();
+
+            auto writeResult = client.ExecuteQuery(R"(
+                UPSERT INTO DecTest (Key, Value) VALUES
+                    (1, CAST(10 AS Decimal(22,9))),
+                    (2, $value),
+                    (3, $value - CAST(1 AS Decimal(22,9)));
+            )", NYdb::NQuery::TTxControl::BeginTx().CommitTx(), params).ExtractValueSync();
+
+            // TODO: Plan A, query should fail as provided value is invalid for given type.
+            UNIT_ASSERT_C(!writeResult.IsSuccess(), writeResult.GetIssues().ToString());
+            UNIT_ASSERT_EQUAL_C(writeResult.GetStatus(), EStatus::BAD_REQUEST, writeResult.GetIssues().ToString());
+
+            // TODO: Plan B, value for key 2 should be inf, as provided value is out of range
+            // for given type.
+            auto session = kikimr.GetTableClient().CreateSession().GetValueSync().GetSession();
+            auto tableYson = ReadTableToYson(session, "/Root/DecTest");
+            CompareYson(R"([])", tableYson);
+
+            if (EnableParameterizedDecimal)
+            {
+                auto paramsValid = TParamsBuilder()
+                    .AddParam("$value").Decimal(validValue).Build()
+                    .Build();
+                auto writeResult = client.ExecuteQuery(R"(
+                    UPSERT INTO DecTest (Key, ValueLarge) VALUES
+                        (2, $value);
+                )", NYdb::NQuery::TTxControl::BeginTx().CommitTx(), paramsValid).ExtractValueSync();
+
+                // TODO: Plan A, query should fail as provided value is invalid for given type.
+                UNIT_ASSERT_C(writeResult.IsSuccess(), writeResult.GetIssues().ToString());
+                UNIT_ASSERT_EQUAL_C(writeResult.GetStatus(), EStatus::SUCCESS, writeResult.GetIssues().ToString());
+
+                auto tableYson = ReadTableToYson(session, "/Root/DecTest");
+                CompareYson(R"([[[2];#;["10000000000000"]]])", tableYson);
+            }
+
+            if (EnableParameterizedDecimal)
+            {
+                auto writeResult = client.ExecuteQuery(R"(
+                    UPSERT INTO DecTest (Key, Value) SELECT Key, ValueLarge as Value FROM DecTest;
+                )", NYdb::NQuery::TTxControl::BeginTx().CommitTx()).ExtractValueSync();
+                // TODO: Plan A, query should fail as provided value is invalid for given type.
+                UNIT_ASSERT_C(!writeResult.IsSuccess(), writeResult.GetIssues().ToString());
+                UNIT_ASSERT_EQUAL_C(writeResult.GetStatus(), EStatus::GENERIC_ERROR, writeResult.GetIssues().ToString());
+            }
+        }
     }
 
     Y_UNIT_TEST(QueryCache) {

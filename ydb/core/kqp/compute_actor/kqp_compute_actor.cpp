@@ -6,19 +6,21 @@
 #include <ydb/core/base/appdata.h>
 #include <ydb/core/kqp/runtime/kqp_compute.h>
 #include <ydb/core/kqp/runtime/kqp_read_actor.h>
-#include <ydb/core/kqp/runtime/kqp_write_actor.h>
 #include <ydb/core/kqp/runtime/kqp_read_table.h>
 #include <ydb/core/kqp/runtime/kqp_sequencer_factory.h>
 #include <ydb/core/kqp/runtime/kqp_stream_lookup_factory.h>
 #include <ydb/core/kqp/runtime/kqp_vector_actor.h>
-#include <ydb/library/yql/providers/generic/actors/yql_generic_provider_factories.h>
+#include <ydb/core/kqp/runtime/kqp_write_actor.h>
 #include <ydb/library/formats/arrow/protos/ssa.pb.h>
-#include <ydb/library/yql/dq/proto/dq_tasks.pb.h>
-#include <ydb/library/yql/providers/solomon/actors/dq_solomon_read_actor.h>
-#include <ydb/library/yql/providers/pq/async_io/dq_pq_read_actor.h>
-#include <ydb/library/yql/providers/pq/async_io/dq_pq_write_actor.h>
+#include <ydb/library/yql/dq/actors/input_transforms/dq_input_transform_lookup_factory.h>
 #include <ydb/library/yql/dq/comp_nodes/dq_block_hash_join.h>
 #include <ydb/library/yql/dq/comp_nodes/dq_hash_combine.h>
+#include <ydb/library/yql/dq/proto/dq_tasks.pb.h>
+#include <ydb/library/yql/providers/generic/actors/yql_generic_provider_factories.h>
+#include <ydb/library/yql/providers/pq/async_io/dq_pq_read_actor.h>
+#include <ydb/library/yql/providers/pq/async_io/dq_pq_write_actor.h>
+#include <ydb/library/yql/providers/solomon/actors/dq_solomon_read_actor.h>
+#include <ydb/library/yql/providers/solomon/actors/dq_solomon_write_actor.h>
 
 namespace NKikimr {
 namespace NMiniKQL {
@@ -72,6 +74,10 @@ TComputationNodeFactory GetKqpActorComputeFactory(TKqpScanComputeContext* comput
                 return WrapDqHashCombine(callable, ctx);
             }
 
+            if (name == "FulltextAnalyze"sv) {
+                return WrapFulltextAnalyze(callable, ctx);
+            }
+
             return nullptr;
         };
 }
@@ -90,6 +96,7 @@ NYql::NDq::IDqAsyncIoFactory::TPtr CreateKqpAsyncIoFactory(
     RegisterKqpWriteActor(*factory, counters);
     RegisterSequencerActorFactory(*factory, counters);
     RegisterKqpVectorResolveActor(*factory, counters);
+    NYql::NDq::RegisterDqInputTransformLookupActorFactory(*factory);
 
     if (federatedQuerySetup) {
         auto s3HttpRetryPolicy = NYql::GetHTTPDefaultRetryPolicy(NYql::THttpRetryPolicyOptions{.RetriedCurlCodes = NYql::FqRetriedCurlCodes()});
@@ -101,6 +108,7 @@ NYql::NDq::IDqAsyncIoFactory::TPtr CreateKqpAsyncIoFactory(
         }
 
         NYql::NDq::RegisterDQSolomonReadActorFactory(*factory, federatedQuerySetup->CredentialsFactory);
+        NYql::NDq::RegisterDQSolomonWriteActorFactory(*factory, federatedQuerySetup->CredentialsFactory);
         NYql::NDq::RegisterDqPqReadActorFactory(*factory, *federatedQuerySetup->Driver, federatedQuerySetup->CredentialsFactory, federatedQuerySetup->PqGateway, nullptr);
         NYql::NDq::RegisterDqPqWriteActorFactory(*factory, *federatedQuerySetup->Driver, federatedQuerySetup->CredentialsFactory, federatedQuerySetup->PqGateway, nullptr);
     }
@@ -175,11 +183,12 @@ IActor* CreateKqpScanComputeActor(const TActorId& executerId, ui64 txId,
 }
 
 IActor* CreateKqpScanFetcher(const NKikimrKqp::TKqpSnapshot& snapshot, std::vector<NActors::TActorId>&& computeActors,
-    const NKikimrTxDataShard::TKqpTransaction::TScanTaskMeta& meta, const NYql::NDq::TComputeRuntimeSettings& settings, const ui64 txId,
-    TMaybe<ui64> lockTxId, ui32 lockNodeId, TMaybe<NKikimrDataEvents::ELockMode> lockMode, const TShardsScanningPolicy& shardsScanningPolicy,
+    const NKikimrTxDataShard::TKqpTransaction::TScanTaskMeta& meta, const NYql::NDq::TComputeRuntimeSettings& settings,
+    const TString& database, const ui64 txId, TMaybe<ui64> lockTxId, ui32 lockNodeId,
+    TMaybe<NKikimrDataEvents::ELockMode> lockMode, const TShardsScanningPolicy& shardsScanningPolicy,
     TIntrusivePtr<TKqpCounters> counters, NWilson::TTraceId traceId, const TCPULimits& cpuLimits) {
-    return new NScanPrivate::TKqpScanFetcherActor(snapshot, settings, std::move(computeActors), txId, lockTxId, lockNodeId, lockMode, meta,
-        shardsScanningPolicy, counters, std::move(traceId), cpuLimits);
+    return new NScanPrivate::TKqpScanFetcherActor(snapshot, settings, std::move(computeActors), txId, lockTxId, lockNodeId, lockMode,
+        database, meta, shardsScanningPolicy, counters, std::move(traceId), cpuLimits);
 }
 
 } // namespace NKikimr::NKqp

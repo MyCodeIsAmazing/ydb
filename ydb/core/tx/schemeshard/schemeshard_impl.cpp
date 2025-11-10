@@ -2643,6 +2643,16 @@ void TSchemeShard::PersistTxState(NIceDb::TNiceDb& db, const TOperationId opId) 
         txState.CdcPathId.ToProto(proto.MutableTxCopyTableExtraData()->MutableCdcPathId());
         bool serializeRes = proto.SerializeToString(&extraData);
         Y_ABORT_UNLESS(serializeRes);
+    } else if (txState.TxType == TTxState::TxCreateCdcStreamAtTable ||
+               txState.TxType == TTxState::TxCreateCdcStreamAtTableWithInitialScan ||
+               txState.TxType == TTxState::TxAlterCdcStreamAtTable ||
+               txState.TxType == TTxState::TxAlterCdcStreamAtTableDropSnapshot ||
+               txState.TxType == TTxState::TxDropCdcStreamAtTable ||
+               txState.TxType == TTxState::TxDropCdcStreamAtTableDropSnapshot) {
+        NKikimrSchemeOp::TGenericTxInFlyExtraData proto;
+        txState.CdcPathId.ToProto(proto.MutableTxCopyTableExtraData()->MutableCdcPathId());
+        bool serializeRes = proto.SerializeToString(&extraData);
+        Y_ABORT_UNLESS(serializeRes);
     }
 
     db.Table<Schema::TxInFlightV2>().Key(opId.GetTxId(), opId.GetSubTxId()).Update(
@@ -4096,7 +4106,7 @@ void TSchemeShard::PersistColumnTableRemove(NIceDb::TNiceDb& db, TPathId pathId,
         storeInfo->ColumnTablesUnderOperation.erase(pathId);
         storeInfo->ColumnTables.erase(pathId);
     }
-    
+
     UpdateDiskSpaceUsage(db, pathId, TPartitionStats(), tableInfo.GetStats().Aggregated, ctx);
 
     db.Table<Schema::ColumnTables>().Key(pathId.LocalPathId).Delete();
@@ -4662,6 +4672,11 @@ NKikimrSchemeOp::TPathVersion TSchemeShard::GetPathVersion(const TPath& path) co
                     result.SetSecurityStateVersion(subDomain->GetSecurityStateVersion());
                     generalVersion += result.GetSubDomainVersion();
                     generalVersion += result.GetSecurityStateVersion();
+
+                    if (ui64 version = subDomain->GetDomainStateVersion()) {
+                        result.SetSubDomainStateVersion(version);
+                        generalVersion += version;
+                    }
                 }
                 break;
             case NKikimrSchemeOp::EPathType::EPathTypeSubDomain:
@@ -7623,6 +7638,7 @@ void TSchemeShard::SetPartitioning(TPathId pathId, TTableInfo::TPtr tableInfo, T
         newPartitioningSet.reserve(newPartitioning.size());
         const auto& oldPartitioning = tableInfo->GetPartitions();
 
+        TInstant now = AppData()->TimeProvider->Now();
         for (const auto& p: newPartitioning) {
             if (!oldPartitioning.empty())
                 newPartitioningSet.insert(p.ShardIdx);
@@ -7631,7 +7647,7 @@ void TSchemeShard::SetPartitioning(TPathId pathId, TTableInfo::TPtr tableInfo, T
             auto it = partitionStats.find(p.ShardIdx);
             if (it != partitionStats.end()) {
                 EnqueueBackgroundCompaction(p.ShardIdx, it->second);
-                UpdateShardMetrics(p.ShardIdx, it->second);
+                UpdateShardMetrics(p.ShardIdx, it->second, now);
             }
         }
 
@@ -8289,6 +8305,7 @@ void TSchemeShard::ResolveSA() {
 
         using TNavigate = NSchemeCache::TSchemeCacheNavigate;
         auto navigate = std::make_unique<TNavigate>();
+        navigate->DatabaseName = AppData()->DomainsInfo->GetDomain()->Name;
         auto& entry = navigate->ResultSet.emplace_back();
         entry.TableId = TTableId(resourcesDomainId.OwnerId, resourcesDomainId.LocalPathId);
         entry.Operation = TNavigate::EOp::OpPath;

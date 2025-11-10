@@ -125,9 +125,9 @@ inline const char *padded_string::data() const noexcept { return data_ptr; }
 
 inline char *padded_string::data() noexcept { return data_ptr; }
 
-inline padded_string::operator std::string_view() const { return std::string_view(data(), length()); }
+inline padded_string::operator std::string_view() const simdjson_lifetime_bound { return std::string_view(data(), length()); }
 
-inline padded_string::operator padded_string_view() const noexcept {
+inline padded_string::operator padded_string_view() const noexcept simdjson_lifetime_bound {
   return padded_string_view(data(), length(), length() + SIMDJSON_PADDING);
 }
 
@@ -192,7 +192,7 @@ inline simdjson::padded_string operator ""_padded(const char *str, size_t len) {
 }
 #ifdef __cpp_char8_t
 inline simdjson::padded_string operator ""_padded(const char8_t *str, size_t len) {
-  return simdjson::padded_string(reinterpret_cast<const char8_t *>(str), len);
+  return simdjson::padded_string(reinterpret_cast<const char *>(str), len);
 }
 #endif
 #endif // SIMDJSON_PADDED_STRING_INL_H

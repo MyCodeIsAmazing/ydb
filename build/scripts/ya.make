@@ -23,7 +23,6 @@ IF (PYTHON2)
         pack_jcoverage_resources.py
         python_yndexer.py
         run_ios_simulator.py
-        run_msvc_wine.py
         symlink.py
         touch.py
         unpacking_jtest_runner.py
@@ -43,6 +42,7 @@ ELSEIF (PYTHON3)
         build_info_gen.py
         build_java_codenav_index.py
         build_java_with_error_prone2.py
+        bundle_output.py
         cat.py
         cgo1_wrapper.py
         check_config_h.py
@@ -114,7 +114,6 @@ ELSEIF (PYTHON3)
         preprocess.py
         process_command_files.py
         process_whole_archive_option.py
-        py_compile.py
         resolve_java_srcs.py
         retry.py
         retry_cc.py
@@ -124,6 +123,7 @@ ELSEIF (PYTHON3)
         run_junit.py
         run_llvm_dsymutil.py
         run_tool.py
+        run_msvc_wine.py
         setup_java_tmpdir.py
         sky.py
         stderr2stdout.py

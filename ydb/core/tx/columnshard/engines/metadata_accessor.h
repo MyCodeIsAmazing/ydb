@@ -24,6 +24,10 @@ private:
 
 public:
     ITableMetadataAccessor(const TString& tablePath);
+
+    virtual bool OrderByLimitAllowed() const {
+        return true;
+    }
     virtual bool NeedDuplicateFiltering() const {
         return true;
     }
@@ -31,9 +35,6 @@ public:
         return true;
     }
     virtual ~ITableMetadataAccessor() = default;
-    virtual TString GetOverridenScanType(const TString& defScanType) const {
-        return defScanType;
-    }
     virtual std::optional<NColumnShard::TUnifiedOptionalPathId> GetPathId() const {
         return std::nullopt;
     }
@@ -42,9 +43,11 @@ public:
         AFL_VERIFY(result);
         return *result;
     }
-    std::vector<TNameTypeInfo> GetPrimaryKeyScheme(const TVersionedPresetSchemas& vSchemas) const {
-        return GetSnapshotSchemaVerified(vSchemas, TSnapshot::Max())->GetIndexInfo().GetPrimaryKeyColumns();
-    }
+
+    std::vector<TNameTypeInfo> GetPrimaryKeyInfo(const TVersionedPresetSchemas& vSchemas) const;
+
+    const std::shared_ptr<arrow::Schema>& GetPrimaryKeyScheme(const TVersionedPresetSchemas& vSchemas) const;
+
     TString GetTableName() const;
     virtual std::shared_ptr<ISnapshotSchema> GetSnapshotSchemaOptional(
         const TVersionedPresetSchemas& vSchemas, const TSnapshot& snapshot) const = 0;

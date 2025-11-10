@@ -77,7 +77,6 @@ public:
         , CaFactory_(std::move(caFactory))
         , AsyncIoFactory(std::move(asyncIoFactory))
         , FederatedQuerySetup(federatedQuerySetup)
-        , State_(std::make_shared<TNodeServiceState>())
         , AccountDefaultPoolInScheduler(config.GetComputeSchedulerSettings().GetAccountDefaultPool())
     {
         if (config.HasIteratorReadsRetrySettings()) {
@@ -93,6 +92,8 @@ public:
 
     void Bootstrap() {
         LOG_I("Starting KQP Node service");
+
+        State_ = std::make_shared<TNodeServiceState>(ActorContext().ActorSystem());
 
         // Subscribe for TableService config changes
         ui32 tableServiceConfigKind = (ui32) NKikimrConsole::TConfigItem::TableServiceConfigItem;
@@ -308,7 +309,7 @@ private:
         for (auto&& i : computesByStage) {
             for (auto&& m : i.second.MutableMetaInfo()) {
                 Register(CreateKqpScanFetcher(msg.GetSnapshot(), std::move(m.MutableActorIds()),
-                    m.GetMeta(), runtimeSettingsBase, txId, lockTxId, lockNodeId, lockMode,
+                    m.GetMeta(), runtimeSettingsBase, msg.GetDatabase(), txId, lockTxId, lockNodeId, lockMode,
                     scanPolicy, Counters, NWilson::TTraceId(ev->TraceId), cpuLimits));
             }
         }

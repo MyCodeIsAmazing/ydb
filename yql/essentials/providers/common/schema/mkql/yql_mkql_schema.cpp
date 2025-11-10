@@ -21,7 +21,7 @@
 namespace NYql {
 namespace NCommon {
 
-template <template<typename> class TSaver>
+template <template <typename> class TSaver>
 class TRuntimeTypeSaver: public TSaver<TRuntimeTypeSaver<TSaver>> {
     typedef TSaver<TRuntimeTypeSaver> TBase;
 
@@ -274,8 +274,7 @@ struct TRuntimeTypeLoader {
         return Builder.NewLinearType(itemType, true);
     }
     TMaybe<TType> LoadCallableType(TType returnType, const TVector<TType>& argTypes, const TVector<TString>& argNames,
-        const TVector<ui64>& argFlags, size_t optionalCount, const TString& payload, ui32 /*level*/) {
-
+                                   const TVector<ui64>& argFlags, size_t optionalCount, const TString& payload, ui32 /*level*/) {
         YQL_ENSURE(argTypes.size() == argNames.size() && argTypes.size() == argFlags.size());
 
         NKikimr::NMiniKQL::TCallableTypeBuilder callableTypeBuilder(Builder.GetTypeEnvironment(), "", returnType);
@@ -298,6 +297,12 @@ struct TRuntimeTypeLoader {
     }
     TMaybe<TType> LoadVariantType(TType underlyingType, ui32 /*level*/) {
         return Builder.NewVariantType(underlyingType);
+    }
+    TMaybe<TType> LoadBlockType(TType /*itemType*/, ui32 /*level*/) {
+        ythrow yexception() << "Unsupported type: Block";
+    }
+    TMaybe<TType> LoadScalarType(TType /*itemType*/, ui32 /*level*/) {
+        ythrow yexception() << "Unsupported type: Scalar";
     }
     void Error(const TString& info) {
         Err << info;
