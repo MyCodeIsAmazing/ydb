@@ -49,18 +49,19 @@ Logging phases indicate the request processing stages at which audit logging rec
 
 The table below summarizes the built-in audit event sources. Use it to identify which component emits the events you need and how to enable those events before diving into the detailed reference.
 
-| Source | UID | What it records | Configuration requirements |
-| --- | --- | --- | --- |
-| [Schemeshard](#schemeshard) | `schemeshard` | Schema operations, ACL modifications, and user management actions. | Included in the [basic audit configuration](#enabling-audit-log). |
-| [gRPC services](#grpc-proxy) | `grpc-proxy` | Non-internal gRPC requests handled by {{ ydb-short-name }} APIs. | Enable the relevant [log classes](#log-class-config) and optional [log phases](#log-phases). |
-| [gRPC connection](#grpc-connection) | `grpc-conn` | Client connection and disconnection events. | Enable the [`enable_grpc_audit`](../reference/configuration/feature_flags.md) feature flag. |
-| [gRPC authentication](#grpc-login) | `grpc-login` | gRPC authentication attempts. | Enable the `Login` class in [`log_class_config`](#log-class-config). |
-| [Monitoring service](#monitoring) | `monitoring` | HTTP requests handled by the monitoring endpoints. | Enable the `ClusterAdmin` class in [`log_class_config`](#log-class-config). |
-| [Heartbeat](#heartbeat) | `audit` | Synthetic heartbeat events proving that audit logging is alive. | Enable the `AuditHeartbeat` class in [`log_class_config`](#log-class-config) and optionally adjust [heartbeat settings](#heartbeat-settings). |
-| [BlobStorage Controller](#bsc) | `bsc` | Console-driven BlobStorage Controller configuration changes. | Included in the [basic audit configuration](#enabling-audit-log). |
-| [Distconf](#distconf) | `distconf` | Distributed configuration updates. | Included in the [basic audit configuration](#enabling-audit-log). |
-| [Web login](#web-login) | `web-login` | Interactions with the web console authentication widget. | Included in the [basic audit configuration](#enabling-audit-log). |
-| [Console](#console) | `console` | Database lifecycle operations and dynamic configuration changes. | Included in the [basic audit configuration](#enabling-audit-log). |
+#|
+|| Source | UID | What it records | Configuration requirements ||
+|| [Schemeshard](#schemeshard) | `schemeshard` | Schema operations, ACL modifications, and user management actions. | Included in the [basic audit configuration](#enabling-audit-log). ||
+|| [gRPC services](#grpc-proxy) | `grpc-proxy` | Non-internal gRPC requests handled by {{ ydb-short-name }} APIs. | Enable the relevant [log classes](#log-class-config) and optional [log phases](#log-phases). ||
+|| [gRPC connection](#grpc-connection) | `grpc-conn` | Client connection and disconnection events. | Enable the [`enable_grpc_audit`](../reference/configuration/feature_flags.md) feature flag. ||
+|| [gRPC authentication](#grpc-login) | `grpc-login` | gRPC authentication attempts. | Enable the `Login` class in [`log_class_config`](#log-class-config). ||
+|| [Monitoring service](#monitoring) | `monitoring` | HTTP requests handled by the monitoring endpoints. | Enable the `ClusterAdmin` class in [`log_class_config`](#log-class-config). ||
+|| [Heartbeat](#heartbeat) | `audit` | Synthetic heartbeat events proving that audit logging is alive. | Enable the `AuditHeartbeat` class in [`log_class_config`](#log-class-config) and optionally adjust [heartbeat settings](#heartbeat-settings). ||
+|| [BlobStorage Controller](#bsc) | `bsc` | Console-driven BlobStorage Controller configuration changes. | Included in the [basic audit configuration](#enabling-audit-log). ||
+|| [Distconf](#distconf) | `distconf` | Distributed configuration updates. | Included in the [basic audit configuration](#enabling-audit-log). ||
+|| [Web login](#web-login) | `web-login` | Interactions with the web console authentication widget. | Included in the [basic audit configuration](#enabling-audit-log). ||
+|| [Console](#console) | `console` | Database lifecycle operations and dynamic configuration changes. | Included in the [basic audit configuration](#enabling-audit-log). ||
+|#
 
 ## Stream destinations {#stream-destinations}
 
