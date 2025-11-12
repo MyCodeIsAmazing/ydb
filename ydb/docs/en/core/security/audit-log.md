@@ -1,24 +1,22 @@
 # Audit log
 
-Audit logging in {{ ydb-short-name }} creates a security-focused record of who performed an action, when it happened, and whether the action succeeded. Unlike diagnostic logs that capture implementation details for troubleshooting, the audit log preserves accountability information for security monitoring, compliance verification, and incident investigations. It records both successful and rejected operations that may affect access, configuration, or data exposure across the cluster.
+_Audit logging_ in {{ ydb-short-name }} creates a security-focused record of what action was performed, who performed an action, when it happened, and whether the action succeeded. Unlike diagnostic logs that capture implementation details for troubleshooting, the audit log preserves accountability information for security monitoring, compliance verification, and incident investigations. It records both successful and rejected operations that may affect access, configuration, or data exposure across the cluster.
 
-Dedicated [event sources](#event-sources-overview) inside {{ ydb-short-name }} services emit audit events. The cluster-wide [`audit_config`](#audit-log-configuration) section defines how these events are serialized and where they are delivered. By configuring this section, you select stream destinations (file, Unified Agent, or `stderr`), enable additional sources, and fine-tune the *log classes* (request groups described in [Log classes](#log-classes)).
-
-Use this page to learn the audit logging concepts, review the available event sources, and configure the stream so that it matches your observability requirements.
+The cluster-wide [`audit_config`](#audit-log-configuration) section defines how these events are serialized and where they are delivered. By configuring this section, you select stream destinations (file, Unified Agent, or `stderr`), enable additional sources, and fine-tune the *log classes* (request groups described in [Log classes](#log-classes)).
 
 ## Key concepts {#audit-log-concepts}
 
 ### Audit events {#audit-events}
 
-An *audit event* is a structured record that captures a single security-relevant action. Every event includes metadata about the authenticated subject, the operation that was attempted, its status, and any extra attributes supplied by the event source.
+An *audit event* is a structured record that captures a single security-relevant action. Every event includes attribetes that describe different aspects of the event. The common attributes are listed in the [Common attributes](#common-attributes) section.
 
 ### Audit event sources {#audit-event-sources}
 
-An *audit event source* is a {{ ydb-short-name }} service or subsystem that can emit audit events. Each source is identified by a unique identifier (UID) and may expose additional attributes specific to the component. Some sources require extra configuration, such as feature flags or enabling certain log classes, before the source starts emitting events.
+An *audit event source* is a {{ ydb-short-name }} service or subsystem that can emit audit events. Each source is identified by a unique identifier (UID) and may expose additional attributes specific to the component. Some sources require extra configuration, such as feature flags or enabling certain log classes, before the source starts emitting events. See the [Audit event sources overview](#audit-event-sources-overview) for details.
 
 ### Log classes {#log-classes}
 
-Audit events are grouped into *log classes* that represent broad categories of operations. You can enable or disable logging for each class in [`log_class_config`](#log-class-config) and, if necessary, tailor the configuration per class. The available log classes are:
+Audit events are grouped into *log classes* that represent broad categories of operations. You can enable or disable logging for each class in [configuration](#log-class-config) and, if necessary, tailor the configuration per class. The available log classes are:
 
 #|
 || Log class.         | Description ||
@@ -37,7 +35,7 @@ Audit events are grouped into *log classes* that represent broad categories of o
 
 ### Log phases {#log-phases}
 
-Logging phases indicate the request processing stages at which audit logging records events.
+Some audit event sources divide the request processing into stages. Logging phases indicate the request processing stages at which audit logging records events. Specifying logging phases is useful when you need fine-grained visibility into request execution and want to capture events before and after critical processing steps.
 
 #|
 || Log phase      | Description ||
@@ -45,25 +43,7 @@ Logging phases indicate the request processing stages at which audit logging rec
 || `Completed`    | A request is completely finished. The `status` attribute is set to `SUCCESS` or `ERROR`. This phase is enabled by default when `log_class_config.log_phase` is not set. ||
 |#
 
-## Event sources overview {#event-sources-overview}
-
-The table below summarizes the built-in audit event sources. Use it to identify which component emits the events you need and how to enable those events before diving into the detailed reference.
-
-#|
-|| Source | UID | What it records | Configuration requirements ||
-|| [Schemeshard](#schemeshard) | `schemeshard` | Schema operations, ACL modifications, and user management actions. | Included in the [basic audit configuration](#enabling-audit-log). ||
-|| [gRPC services](#grpc-proxy) | `grpc-proxy` | Non-internal gRPC requests handled by {{ ydb-short-name }} APIs. | Enable the relevant [log classes](#log-class-config) and optional [log phases](#log-phases). ||
-|| [gRPC connection](#grpc-connection) | `grpc-conn` | Client connection and disconnection events. | Enable the [`enable_grpc_audit`](../reference/configuration/feature_flags.md) feature flag. ||
-|| [gRPC authentication](#grpc-login) | `grpc-login` | gRPC authentication attempts. | Enable the `Login` class in [`log_class_config`](#log-class-config). ||
-|| [Monitoring service](#monitoring) | `monitoring` | HTTP requests handled by the monitoring endpoints. | Enable the `ClusterAdmin` class in [`log_class_config`](#log-class-config). ||
-|| [Heartbeat](#heartbeat) | `audit` | Synthetic heartbeat events proving that audit logging is alive. | Enable the `AuditHeartbeat` class in [`log_class_config`](#log-class-config) and optionally adjust [heartbeat settings](#heartbeat-settings). ||
-|| [BlobStorage Controller](#bsc) | `bsc` | Console-driven BlobStorage Controller configuration changes. | Included in the [basic audit configuration](#enabling-audit-log). ||
-|| [Distconf](#distconf) | `distconf` | Distributed configuration updates. | Included in the [basic audit configuration](#enabling-audit-log). ||
-|| [Web login](#web-login) | `web-login` | Interactions with the web console authentication widget. | Included in the [basic audit configuration](#enabling-audit-log). ||
-|| [Console](#console) | `console` | Database lifecycle operations and dynamic configuration changes. | Included in the [basic audit configuration](#enabling-audit-log). ||
-|#
-
-## Stream destinations {#stream-destinations}
+### Stream destinations {#stream-destinations}
 
 The data of the audit log stream can be delivered to:
 
@@ -71,11 +51,29 @@ The data of the audit log stream can be delivered to:
 * An agent for delivering [Unified Agent](https://yandex.cloud/docs/monitoring/concepts/data-collection/unified-agent/) metrics.
 * The standard error stream, `stderr`.
 
-You can use any of the listed destinations or their combinations.
+You can use any of the listed destinations or their combinations. See the [audit log configuration](#audit-log-configuration) for details.
 
 If you forward the stream to a file, file-system permissions control access to the audit log. Saving the audit log to a file is recommended for production installations.
 
 Forward the audit log to the standard error stream (`stderr`) for test installations. Further stream processing is determined by the {{ ydb-short-name }} cluster [logging](../devops/observability/logging.md) settings.
+
+## Audit event sources overview {#audit-event-sources-overview}
+
+The table below summarizes the built-in audit event sources. Use it to identify which component emits the events you need and how to enable those events before diving into the detailed reference.
+
+#|
+|| Source / UID | What it records | Configuration requirements ||
+|| [Schemeshard](#schemeshard) </br>`schemeshard` | Schema operations, ACL modifications, and user management actions. | Included in the [basic audit configuration](#enabling-audit-log). ||
+|| [gRPC services](#grpc-proxy) </br>`grpc-proxy` | Non-internal gRPC requests handled by {{ ydb-short-name }} APIs. | Enable the relevant [log classes](#log-class-config) and optional [log phases](#log-phases). ||
+|| [gRPC connection](#grpc-connection) </br>`grpc-conn` | Client connection and disconnection events. | Enable the [`enable_grpc_audit`](../reference/configuration/feature_flags.md) feature flag. ||
+|| [gRPC authentication](#grpc-login) </br>`grpc-login` | gRPC authentication attempts. | Enable the `Login` class in [`log_class_config`](#log-class-config). ||
+|| [Monitoring service](#monitoring) </br>`monitoring` | HTTP requests handled by the monitoring endpoints. | Enable the `ClusterAdmin` class in [`log_class_config`](#log-class-config). ||
+|| [Heartbeat](#heartbeat) </br>`audit` | Synthetic heartbeat events proving that audit logging is alive. | Enable the `AuditHeartbeat` class in [`log_class_config`](#log-class-config) and optionally adjust [heartbeat settings](#heartbeat-settings). ||
+|| [BlobStorage Controller](#bsc) </br>`bsc` | Console-driven BlobStorage Controller configuration changes. | Included in the [basic audit configuration](#enabling-audit-log). ||
+|| [Distconf](#distconf) </br>`distconf` | Distributed configuration updates. | Included in the [basic audit configuration](#enabling-audit-log). ||
+|| [Web login](#web-login) </br>`web-login` | Interactions with the web console authentication widget. | Included in the [basic audit configuration](#enabling-audit-log). ||
+|| [Console](#console) </br>`console` | Database lifecycle operations and dynamic configuration changes. | Included in the [basic audit configuration](#enabling-audit-log). ||
+|#
 
 ## Audit log events {#events}
 
