@@ -84,7 +84,7 @@ _Аудитный лог_ — это поток записей, фиксирую
 || [gRPC-сервисы](#grpc-proxy) </br>`grpc-proxy` | Внешние gRPC-запросы {{ ydb-short-name }}. | Включите соответствующие [классы логирования](#log-class-config) и при необходимости [фазы логирования](#log-phases). ||
 || [gRPC-соединение](#grpc-connection) </br>`grpc-conn` | События подключения и отключения клиентов. | Включите функциональный флаг [`enable_grpc_audit`](../reference/configuration/feature_flags.md). ||
 || [gRPC-аутентификация](#grpc-login) </br>`grpc-login` | Попытки аутентификации в gRPC. | Включите класс `Login` в [`log_class_config`](#log-class-config). ||
-|| [Сервис мониторинга](#monitoring) </br>`monitoring` | HTTP-запросы, обрабатываемые эндпоинтом мониторинга. | Включите класс `ClusterAdmin` в [`log_class_config`](#log-class-config). ||
+|| [Сервис мониторинга](#monitoring) </br>`monitoring` | HTTP-запросы, обрабатываемые [эндпоинтом мониторинга](../reference/configuration/tls.md#http). | Включите класс `ClusterAdmin` в [`log_class_config`](#log-class-config). ||
 || [Heartbeat](#heartbeat) </br>`audit` | Синтетические heartbeat-события, подтверждающие работоспособность аудитного логирования. | Включите класс `AuditHeartbeat` в [`log_class_config`](#log-class-config) и при необходимости настройте [параметры heartbeat](#heartbeat-settings). ||
 || [BlobStorage Controller](#bsc) </br>`bsc` | Изменения конфигурации BlobStorage Controller из консоли. | Входит в [базовую конфигурацию аудита](#enabling-audit-log). ||
 || [Distconf](#distconf) </br>`distconf` | Обновления распределённой конфигурации. | Входит в [базовую конфигурацию аудита](#enabling-audit-log). ||

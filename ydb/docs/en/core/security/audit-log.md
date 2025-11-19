@@ -84,7 +84,7 @@ The table below summarizes the built-in audit event sources. Use it to identify 
 || [gRPC services](#grpc-proxy) </br>`grpc-proxy` | Non-internal requests handled by {{ ydb-short-name }} gRPC endpoints. | Enable the relevant [log classes](#log-class-config) and optional [log phases](#log-phases). ||
 || [gRPC connection](#grpc-connection) </br>`grpc-conn` | Client connection and disconnection events. | Enable the [`enable_grpc_audit`](../reference/configuration/feature_flags.md) feature flag. ||
 || [gRPC authentication](#grpc-login) </br>`grpc-login` | gRPC authentication attempts. | Enable the `Login` class in [`log_class_config`](#log-class-config). ||
-|| [Monitoring service](#monitoring) </br>`monitoring` | HTTP requests handled by the monitoring endpoint. | Enable the `ClusterAdmin` class in [`log_class_config`](#log-class-config). ||
+|| [Monitoring service](#monitoring) </br>`monitoring` | HTTP requests handled by the [monitoring endpoint](../reference/configuration/tls.md#http). | Enable the `ClusterAdmin` class in [`log_class_config`](#log-class-config). ||
 || [Heartbeat](#heartbeat) </br>`audit` | Synthetic heartbeat events proving that audit logging is alive. | Enable the `AuditHeartbeat` class in [`log_class_config`](#log-class-config) and optionally adjust [heartbeat settings](#heartbeat-settings). ||
 || [BlobStorage Controller](#bsc) </br>`bsc` | Console-driven BlobStorage Controller configuration changes. | Included in the [basic audit configuration](#enabling-audit-log). ||
 || [Distconf](#distconf) </br>`distconf` | Distributed configuration updates. | Included in the [basic audit configuration](#enabling-audit-log). ||
