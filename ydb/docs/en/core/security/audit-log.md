@@ -1,21 +1,31 @@
 # Audit log
 
-_An audit log_ is a stream of events that includes data about all the operations that tried to change the {{ ydb-short-name }} objects. The audit log captures:
+_An audit log_ is a stream of records that document the operation of the {{ ydb-short-name }} cluster. Unlike diagnostic logs, which help investigate technical incidents and troubleshoot issues, the audit log provides data relevant to security. It serves as a source of information that answers the questions: who did what, when, and from where.
 
-* What action was performed.
-* Who performed the action.
-* When the action occurred.
-* Whether the action succeeded.
+A single audit log record may look like this:
 
-Unlike diagnostic logs that capture implementation details for troubleshooting, the audit log preserves accountability information for security monitoring, compliance verification, and incident investigations. It records both successful and rejected operations that may affect access, configuration, or data exposure across the cluster.
+```json
+{"@timestamp":"2025-11-03T18:07:39.056211Z","@log_type":"audit","operation":"ExecuteQueryRequest","database":"/my_dir/db1","status":"SUCCESS","subject":"serviceaccount@as","remote_address":"ipv6:[xxxx:xxx:xxx:xxx:x:xxxx:xxx:xxxx]"}
+```
 
-The cluster-wide [`audit_config`](#audit-log-configuration) section defines how these events are serialized and where they are delivered. By configuring this section, you select stream destinations (file, Unified Agent, or `stderr`), enable additional sources, and fine-tune the *log classes* (request groups described in [Log classes](#log-classes)).
+Examples of typical audit log events:
+
+* Data access through DML requests.
+* Schema or configuration management operations.
+* Changes to permissions or access-control settings.
+* Administrative user actions.
+
+The [`audit_config`](#audit-log-configuration) section in the cluster configuration defines which audit logs are collected, how they need to be serialized and where they are delivered.
 
 ## Key concepts {#audit-log-concepts}
 
 ### Audit events {#audit-events}
 
 An *audit event* is a record in the audit log that captures a single security-relevant action. Every event includes attributes that describe different aspects of the event. The common attributes are listed in the [Common attributes](#common-attributes) section.
+
+### Audit event sources {#audit-event-sources}
+
+An *audit event source* is a {{ ydb-short-name }} service or subsystem that can emit audit events. Each source is identified by a unique identifier (UID) and may expose additional attributes specific to the component. Some sources require extra configuration, such as feature flags, before the source starts emitting events. See the [Audit event sources overview](#audit-event-sources-overview) for details.
 
 ### Log classes {#log-classes}
 
@@ -36,6 +46,8 @@ Audit events are grouped into *log classes* that represent broad categories of o
 || `Default`          | Default settings for any component that doesn't have a configuration entry. ||
 |#
 
+At the moment, not all audit event sources categorize events into log classes. For most of them, the [basic configuration](#enabling-audit-log) is sufficient to capture their events. See the [Audit event sources overview](#audit-event-sources-overview) section for details.
+
 ### Log phases {#log-phases}
 
 Some audit event sources divide the request processing into stages. *Logging phase* indicates the processing stages at which audit logging records events. Specifying logging phases is useful when you need fine-grained visibility into request execution and want to capture events before and after critical processing steps. The available log phases are:
@@ -45,10 +57,6 @@ Some audit event sources divide the request processing into stages. *Logging pha
 || `Received`     | A request is received and the initial checks and authentication are made. The `status` attribute is set to `IN-PROCESS`. </br>This phase is disabled by default; you must include `Received` in `log_class_config.log_phase` to enable it. ||
 || `Completed`    | A request is completely finished. The `status` attribute is set to `SUCCESS` or `ERROR`. This phase is enabled by default when `log_class_config.log_phase` is not set. ||
 |#
-
-### Audit event sources {#audit-event-sources}
-
-An *audit event source* is a {{ ydb-short-name }} service or subsystem that can emit audit events. Each source is identified by a unique identifier (UID) and may expose additional attributes specific to the component. Some sources require extra configuration, such as feature flags or enabling certain log classes, before the source starts emitting events. See the [Audit event sources overview](#audit-event-sources-overview) for details.
 
 ### Audit log destinations {#stream-destinations}
 
@@ -182,10 +190,10 @@ The table below lists additional attributes specific to the `Schemeshard` source
 || **Request fields**         | **>** ||
 || `query_text`               | Sanitized YQL query text. ||
 || `prepared_query_id`        | Identifier of a prepared query. ||
-|| `program_text`             | `ExecuteTabletMiniKQL` payload of the TabletService. ||
-|| `schema_changes`           | `ChangeTabletSchema` payload of the TabletService. ||
+|| `program_text`             | MiniKQL program sent with the request. ||
+|| `schema_changes`           | Description of schema modifications requested in the operation. ||
 || `table`                    | Full table path. ||
-|| `row_count`                | Number of rows affected by `BulkUpsert`. ||
+|| `row_count`                | Number of rows processed by a bulk upsert request. ||
 || `tablet_id`                | Tablet identifier. ||
 |#
 
