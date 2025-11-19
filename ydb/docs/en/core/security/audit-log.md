@@ -1,6 +1,6 @@
 # Audit log
 
-_An audit log_ is a stream of records that document the operation of the {{ ydb-short-name }} cluster. Unlike diagnostic logs, which help investigate technical incidents and troubleshoot issues, the audit log provides data relevant to security. It serves as a source of information that answers the questions: who did what, when, and from where.
+_An audit log_ is a stream of records that document the operation of the {{ ydb-short-name }} cluster. Unlike technical logs, which help detect failures and troubleshoot issues, the audit log provides data relevant to security. It serves as a source of information that answers the questions: who did what, when, and from where.
 
 A single audit log record may look like this:
 
@@ -37,8 +37,8 @@ Audit events are grouped into *log classes* that represent broad categories of o
 || `DatabaseAdmin`    | Database administration requests. ||
 || `Login`            | Login requests. ||
 || `NodeRegistration` | Node registration. ||
-|| `Ddl`              | Data Definition Language (DDL) requests. ||
-|| `Dml`              | Data Manipulation Language (DML) requests. ||
+|| `Ddl`              | DDL requests. ||
+|| `Dml`              | DML requests. ||
 || `Operations`       | Asynchronous remote procedure call (RPC) operations that require polling to track the result. ||
 || `ExportImport`     | Export and import data operations. ||
 || `Acl`              | Access Control List (ACL) operations. ||
@@ -81,7 +81,7 @@ The table below summarizes the built-in audit event sources. Use it to identify 
 #|
 || Source / UID | What it records | Configuration requirements ||
 || [Schemeshard](#schemeshard) </br>`schemeshard` | Schema operations, ACL modifications, and user management actions. | Included in the [basic audit configuration](#enabling-audit-log). ||
-|| [gRPC services](#grpc-proxy) </br>`grpc-proxy` | Non-internal gRPC requests handled by {{ ydb-short-name }} APIs. | Enable the relevant [log classes](#log-class-config) and optional [log phases](#log-phases). ||
+|| [gRPC services](#grpc-proxy) </br>`grpc-proxy` | Non-internal requests handled by {{ ydb-short-name }} gRPC endpoints. | Enable the relevant [log classes](#log-class-config) and optional [log phases](#log-phases). ||
 || [gRPC connection](#grpc-connection) </br>`grpc-conn` | Client connection and disconnection events. | Enable the [`enable_grpc_audit`](../reference/configuration/feature_flags.md) feature flag. ||
 || [gRPC authentication](#grpc-login) </br>`grpc-login` | gRPC authentication attempts. | Enable the `Login` class in [`log_class_config`](#log-class-config). ||
 || [Monitoring service](#monitoring) </br>`monitoring` | HTTP requests handled by the monitoring endpoint. | Enable the `ClusterAdmin` class in [`log_class_config`](#log-class-config). ||
@@ -188,12 +188,12 @@ The table below lists additional attributes specific to the `Schemeshard` source
 || `begin_tx`                 | Flag set to `1` when the request starts a new transaction. ||
 || `commit_tx`                | Shows whether the request commits the transaction. Possible values: `true`, `false`. ||
 || **Request fields**         | **>** ||
-|| `query_text`               | Sanitized YQL query text. ||
+|| `query_text`               | Sanitized [YQL](../core/yql/reference/index.md) query text. ||
 || `prepared_query_id`        | Identifier of a prepared query. ||
-|| `program_text`             | MiniKQL program sent with the request. ||
+|| `program_text`             | [MiniKQL program](../concepts/glossary.md#minikql) sent with the request. ||
 || `schema_changes`           | Description of schema modifications requested in the operation. ||
 || `table`                    | Full table path. ||
-|| `row_count`                | Number of rows processed by a bulk upsert request. ||
+|| `row_count`                | Number of rows processed by a [bulk upsert](../recipes/ydb-sdk/bulk-upsert.md) request. ||
 || `tablet_id`                | Tablet identifier. ||
 |#
 
