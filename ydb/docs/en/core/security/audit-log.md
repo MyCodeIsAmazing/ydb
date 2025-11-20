@@ -188,7 +188,7 @@ The table below lists additional attributes specific to the `Schemeshard` source
 || `begin_tx`                 | Flag set to `1` when the request starts a new transaction. ||
 || `commit_tx`                | Shows whether the request commits the transaction. Possible values: `true`, `false`. ||
 || **Request fields**         | **>** ||
-|| `query_text`               | Sanitized [YQL](../core/yql/reference/index.md) query text. ||
+|| `query_text`               | Sanitized [YQL](../yql/reference/index.md) query text. ||
 || `prepared_query_id`        | Identifier of a prepared query. ||
 || `program_text`             | [MiniKQL program](../concepts/glossary.md#minikql) sent with the request. ||
 || `schema_changes`           | Description of schema modifications requested in the operation. ||
