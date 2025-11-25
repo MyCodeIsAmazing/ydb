@@ -1,0 +1,2058 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>[#NBYDB-1120] Move UI dashboard management to Grafana side</title>
+    <meta http-equiv="Content-Type" Content="application/vnd.ms-word; charset=UTF-8">
+        <style type="text/css">
+
+.tableBorder, .grid
+{
+    background-color: #fff;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tableBorder td, .grid td
+{
+    vertical-align: top;
+    padding: 2px;
+    border: 1px solid #ccc;
+}
+
+.noPadding
+{
+    padding: 0 !important;
+}
+
+h3 .subText
+{
+    font-size: 60%;
+    font-weight: normal;
+}
+
+.tabLabel
+{
+    font-weight: bold;
+    border: 1px solid #ccc;
+    border-bottom:none;
+    padding: 2px;
+    display: inline;
+}
+
+td.blank
+{
+    padding: 0;
+    margin: 0;
+}
+
+.blank td
+{
+    border: none;
+}
+
+#descriptionArea
+{
+    margin: 0;
+    padding: 2px;
+    border: 1px solid #ccc;
+}
+
+hr
+{
+    border-top:1px solid #aaa;
+}
+
+hr.fullcontent
+{
+  height: 15px;
+  padding: 10px 0;
+  background: #fff url('https://nebius.atlassian.net/images/icons/hr.gif') no-repeat scroll center;
+}
+
+</style>
+
+</head>
+<body>
+
+<table class="tableBorder" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" width="100%" colspan="2" valign="top">
+                            <b><a id="parent_issue_summary" href="https://nebius.atlassian.net/browse/NBYDB-1692">Observability</a></b>
+                <span style="font-size: 9px">(<a id="parent_issue_key" href="https://nebius.atlassian.net/browse/NBYDB-1692">NBYDB-1692</a>)</span>
+                <h3 class="formtitle"><img src="https://nebius.atlassian.net/images/icons/link_out_bot.gif" width="16" height="16" />
+                        [NBYDB-1120]&nbsp;<a href="https://nebius.atlassian.net/browse/NBYDB-1120">Move UI dashboard management to Grafana side</a>
+            <span class="subText">
+               Создано: 09/мая/25                   &nbsp;Обновлено: 24/ноя/25
+
+                                            </span>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Статус:</b></td>
+        <td width="80%">В работе</td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Проект:</b></td>
+        <td width="80%"><a href="https://nebius.atlassian.net/secure/BrowseProject.jspa?id=10305">NBYDB</a></td>
+    </tr>
+
+        <tr>
+            <td><b>Компоненты:</b></td>
+            <td>
+                            Нет
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Версии Affects:</b></td>
+            <td>
+                            Нет
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Версии исправления:</b></td>
+            <td>
+                            Нет
+                </td>
+    </tr>
+    
+    
+            <td width="20%"><b>Родитель:</b></td>
+        <td width="80%"><a href="https://nebius.atlassian.net/browse/NBYDB-1692">Observability</a></td>
+    </table>
+
+<br />
+<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" valign="top" width="20%">
+            <b>Тип:</b>
+        </td>
+        <td bgcolor="#ffffff" valign="top"  width="30%" >
+            Задача
+        </td>
+
+                    <td bgcolor="#f0f0f0">
+                <b>Приоритет:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap>
+                Medium
+            </td>
+            </tr>
+    <tr>
+                        <td bgcolor="#f0f0f0" valign="top" width="20%">
+                <b>Автор:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top"  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:ef788c06-e972-41e1-b982-c7ef30523c4e"
+                id="word_reporter_712020:ef788c06-e972-41e1-b982-c7ef30523c4e"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3Aef788c06-e972-41e1-b982-c7ef30523c4e">
+                    Maxim Gorbunov
+                </a>
+
+                            </td>
+        
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Исполнитель:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                id="word_assignee_712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f">
+                    Andrei Rykov
+                </a>
+
+                            </td>
+            </tr>
+    	<tr>
+		<td bgcolor="#f0f0f0" width="20%">
+			<b>Решение:</b>
+		</td>
+		<td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+            				Нет решения
+                    </td>
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Голоса:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                0
+            </td>
+        
+    </tr>
+    
+        <tr>
+        <td bgcolor="#f0f0f0" width="20%">
+            <b>Метки:</b>
+        </td>
+        <td id="labels-5033985-value" class="value" bgcolor="#ffffff" valign="top" colspan="3" nowrap>
+                            Нет
+                    </td>
+    </tr>
+    
+    	<tr>
+        		<td bgcolor="#f0f0f0" width="20%"><b>Оценка остатка:</b></td>
+        <td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Не определено
+            		</td>
+    </tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Затраченное время:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Не определено
+            		</td>
+	</tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Исходная оценка:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Не определено
+            		</td>
+    </tr>
+    
+    </table>
+
+
+
+    <br />
+
+    	<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+            
+
+                <tr>
+            <td bgcolor="#f0f0f0" width=20% valign=top>
+                <b>Вложения:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top">
+                                    <img src="https://nebius.atlassian.net/images/icons/attach/image.gif" height="16" width="16" border="0" alt="PNG файл">
+                    image-20250702-140129.png &nbsp;&nbsp;&nbsp;
+                                    <img src="https://nebius.atlassian.net/images/icons/attach/image.gif" height="16" width="16" border="0" alt="PNG файл">
+                    image-20250702-135842.png &nbsp;&nbsp;&nbsp;
+                                    <img src="https://nebius.atlassian.net/images/icons/attach/image.gif" height="16" width="16" border="0" alt="PNG файл">
+                    image-20250703-194232.png &nbsp;&nbsp;&nbsp;
+                                    <img src="https://nebius.atlassian.net/images/icons/attach/image.gif" height="16" width="16" border="0" alt="PNG файл">
+                    Screenshot 2025-10-16 at 15.29.59.png &nbsp;&nbsp;&nbsp;
+                                    <img src="https://nebius.atlassian.net/images/icons/attach/image.gif" height="16" width="16" border="0" alt="PNG файл">
+                    Screenshot 2025-10-16 at 15.36.18.png &nbsp;&nbsp;&nbsp;
+                                    <img src="https://nebius.atlassian.net/images/icons/attach/image.gif" height="16" width="16" border="0" alt="PNG файл">
+                    Screenshot 2025-10-16 at 15.46.19.png &nbsp;&nbsp;&nbsp;
+                                    <img src="https://nebius.atlassian.net/images/icons/attach/image.gif" height="16" width="16" border="0" alt="PNG файл">
+                    Screenshot 2025-11-06 at 10.53.20.png &nbsp;&nbsp;&nbsp;
+                                    <img src="https://nebius.atlassian.net/images/icons/attach/image.gif" height="16" width="16" border="0" alt="JPEG файл">
+                    photo_2025-11-06_10-50-34.jpg &nbsp;&nbsp;&nbsp;
+                                    <img src="https://nebius.atlassian.net/images/icons/attach/image.gif" height="16" width="16" border="0" alt="PNG файл">
+                    ChatGPT Image Nov 11, 2025, 02_24_04 PM.png &nbsp;&nbsp;&nbsp;
+                                    <img src="https://nebius.atlassian.net/images/icons/attach/image.gif" height="16" width="16" border="0" alt="PNG файл">
+                    ChatGPT Image Nov 11, 2025, 02_24_04 PM (0d4a05d3-986a-4933-b7c4-9dc899049bf0).png &nbsp;&nbsp;&nbsp;
+                                    <img src="https://nebius.atlassian.net/images/icons/attach/image.gif" height="16" width="16" border="0" alt="PNG файл">
+                    Screenshot 2025-11-12 at 18.28.26 (3).png &nbsp;&nbsp;&nbsp;
+                                    <img src="https://nebius.atlassian.net/images/icons/attach/image.gif" height="16" width="16" border="0" alt="PNG файл">
+                    Screenshot 2025-11-12 at 18.28.26 (4).png &nbsp;&nbsp;&nbsp;
+                                    <img src="https://nebius.atlassian.net/images/icons/attach/image.gif" height="16" width="16" border="0" alt="PNG файл">
+                    Screenshot 2025-11-12 at 18.28.26 (6).png &nbsp;&nbsp;&nbsp;
+                                    <img src="https://nebius.atlassian.net/images/icons/attach/image.gif" height="16" width="16" border="0" alt="PNG файл">
+                    Screenshot 2025-11-13 at 11.04.21.png &nbsp;&nbsp;&nbsp;
+                                    <img src="https://nebius.atlassian.net/images/icons/attach/image.gif" height="16" width="16" border="0" alt="PNG файл">
+                    Screenshot 2025-11-13 at 11.04.21 (1).png &nbsp;&nbsp;&nbsp;
+                                    <img src="https://nebius.atlassian.net/images/icons/attach/image.gif" height="16" width="16" border="0" alt="PNG файл">
+                    Screenshot 2025-11-13 at 11.33.17.png &nbsp;&nbsp;&nbsp;
+                            </td>
+        </tr>
+        
+            <tr>
+            <td bgcolor="#f0f0f0" width="20%" valign="top">
+                <b>Связи задачи:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" class="noPadding">
+                <table cellpadding="0" cellspacing="0" border="0" width="100%" class="blank">
+                                            <tr>
+                            <td colspan="4" bgcolor="#f0f0f0">
+                                <b>BRelates</b><br/>
+                            </td>
+                        </tr>
+                                    <tr>
+            <td>
+                relates to
+            </td>
+            <td>
+                <a href="https://nebius.atlassian.net/browse/EMPDEV-80">
+                     EMPDEV-80                 </a>
+            </td>
+            <td>
+                Andrei Rykov professional development
+            </td>
+            <td>
+                Waiting for feedback
+            </td>
+        </tr>
+                                                                            <tr>
+                            <td colspan="4" bgcolor="#f0f0f0">
+                                <b>Blocks</b><br/>
+                            </td>
+                        </tr>
+                                                                <tr>
+            <td>
+                is blocked by
+            </td>
+            <td>
+                <a href="https://nebius.atlassian.net/browse/NBYDB-1216">
+                     <strike>NBYDB-1216</strike>                 </a>
+            </td>
+            <td>
+                Update UI to 9.6.3
+            </td>
+            <td>
+                Готово
+            </td>
+        </tr>
+                                        </table>
+            </td>
+        </tr>
+    
+
+
+    
+                        <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Rank:</b></td>
+                <td id="customfield_10019-5033985-value" class="value" bgcolor="#ffffff" width="80%">      1|i19cup:h
+  </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Start date:</b></td>
+                <td id="customfield_10015-5033985-value" class="value" bgcolor="#ffffff" width="80%">          <span title="19/июн/25"><time datetime="2025-06-19">19/июн/25</time></span>
+    </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Sprint:</b></td>
+                <td id="customfield_10020-5033985-value" class="value" bgcolor="#ffffff" width="80%">2025 Q3, 2025 Q2, 2025 Q4</td>
+            </tr>
+            </table>
+
+    <br/>
+
+    <table cellpadding="2" cellspacing="0" border="0" width="100%" align="center">
+    <tr>
+        <td bgcolor="#bbbbbb" width="1%" nowrap align="center">
+            &nbsp;<font color="#ffffff"><b>Описание</b></font>&nbsp;
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    </table>
+
+    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td id="descriptionArea">
+            <h3><a name="Motivation"></a>Motivation</h3>
+
+<p><a href="https://t.me/c/2126426325/30490" title="smart-link" class="external-link" rel="nofollow noreferrer">https://t.me/c/2126426325/30490</a> </p>
+
+<p>The YDB team would like to see more links displayed in the UI on cluster and database pages.<br/>
+Currently, only a very limited number of links can be configured. For example, it’s not possible to set up multiple monitoring links. Each customization requires a manual change in the UI, which is inconvenient and time-consuming.</p>
+
+<p>Team wants to be able to add new links more quickly — for example, multiple links to dashboards or graphs, if needed.</p>
+
+<p>Vlad Kuznecov mentioned these dashboards for database page:<br/>
+<a href="https://grafana.nebius.dev/goto/xiSvjIaHg?orgId=1" class="external-link" rel="nofollow noreferrer">https://grafana.nebius.dev/goto/xiSvjIaHg?orgId=1</a><br/>
+<a href="https://grafana.nebius.dev/goto/hv5djS-NR?orgId=1" class="external-link" rel="nofollow noreferrer">https://grafana.nebius.dev/goto/hv5djS-NR?orgId=1</a><br/>
+<a href="https://grafana.nebius.dev/goto/YrYOjI-Hg?orgId=1" class="external-link" rel="nofollow noreferrer">https://grafana.nebius.dev/goto/YrYOjI-Hg?orgId=1</a></p>
+
+<h2><a name="Scenarios"></a>Scenarios</h2>
+
+<p><b>View cluster dashboards and logs from cluster page</b></p>
+
+<p><b>Actor:</b> YDB UI user<br/>
+<b>Goal:</b> Access cluster logs and dashboards using UI<br/>
+<b>Steps:</b></p>
+<ol>
+	<li>The user opens the YDB UI at <tt>ydb.nebius.dev</tt> and navigates to a specific cluster.</li>
+	<li>The UI loads cluster information from <tt>Meta</tt>, including available link configuration.</li>
+	<li>If tag-based links are configured, the UI requests dashboards from Grafana by tag.</li>
+	<li>The UI appends dynamically loaded dashboard links below the existing links.</li>
+	<li>The UI displays a vertical list of links in the <tt>Overview -&gt; Details</tt> section (see picture below).</li>
+	<li>The user clicks a link.</li>
+	<li>A new tab opens in Grafana with auto-filled parameters (<tt>ds</tt>, <tt>workspace</tt>).<br/>
+<b>Outcome:</b> The user opens the relevant Grafana dashboard with essential parameters applied and can see all relevant dashboards for the cluster.<br/>
+<b>Fallback:</b> If Grafana or dynamic data is unavailable (timeout), only static links are shown and the UI remains fully functional.<br/>
+<span class="image-wrap" style=""><img src="/rest/api/3/attachment/content/847345" alt="photo_2025-11-06_10-50-34.jpg" width="430" style="border: 0px solid black" /></span><br/>
+<span class="image-wrap" style=""><img src="/rest/api/3/attachment/content/836002" alt="Screenshot 2025-10-16 at 15.29.59.png" width="314" style="border: 0px solid black" /></span></li>
+</ol>
+
+
+<p><b>View database dashboards and logs from cluster page</b></p>
+
+<p><b>Actor:</b> YDB UI user<br/>
+<b>Goal:</b> Access database-specific dashboards and logs using the UI<br/>
+<b>Steps:</b></p>
+<ol>
+	<li>The user opens the YDB UI at <tt>ydb.nebius.dev</tt> and navigates to a specific cluster to the <tt>Databases</tt> section.</li>
+	<li>The UI loads database information from <tt>Meta</tt>, including available link configuration.</li>
+	<li>If tag-based links are configured, the UI requests dashboards from Grafana by tag.</li>
+	<li>The UI appends dynamically loaded dashboard links below the existing links.</li>
+	<li>When the user hovers over the <b>info <img class="emoticon" src="/images/icons/emoticons/information.png" height="16" width="16" align="absmiddle" alt="" border="0"/></b> icon for a database, the UI shows a vertical list of links in a tooltip.</li>
+	<li>The user clicks a link.</li>
+	<li>A new tab opens in Grafana with auto-filled parameters (<tt>ds</tt>, <tt>workspace</tt>, <tt>database</tt>).<br/>
+<b>Outcome:</b> The user opens the relevant Grafana dashboard with essential parameters applied and can see all relevant dashboards for the database.<br/>
+<b>Fallback:</b> If Grafana or dynamic data is unavailable (timeout), only static links are shown and the UI remains fully functional.<br/>
+<span class="image-wrap" style=""><img src="/rest/api/3/attachment/content/836003" alt="Screenshot 2025-10-16 at 15.36.18.png" width="564" style="border: 0px solid black" /></span></li>
+</ol>
+
+
+<p><b>View database dashboards and logs from database page</b></p>
+
+<p><b>Actor:</b> YDB UI user<br/>
+<b>Goal:</b> Open database-specific dashboards and logs directly from the database page<br/>
+<b>Steps:</b></p>
+<ol>
+	<li>The user opens the YDB UI at <tt>ydb.nebius.dev</tt> and navigates to a specific database.</li>
+	<li>The UI loads database information from <tt>Meta</tt>, including available link configuration.</li>
+	<li>If tag-based links are configured, the UI requests dashboards from Grafana by tag.</li>
+	<li>The UI appends dynamically loaded dashboard links below the existing links.</li>
+	<li>The UI displays several link icons in a row (see pictures below), each with a tooltip describing its target dashboard or logs page.</li>
+	<li>The user clicks an icon.</li>
+	<li>A new tab opens in Grafana with auto-filled parameters (<tt>ds</tt>, <tt>workspace</tt>, <tt>database</tt>).<br/>
+<b>Outcome:</b> The user opens the relevant Grafana dashboard with essential parameters applied and can see all relevant dashboards for the database.<br/>
+<b>Fallback:</b> If Grafana or dynamic data is unavailable (timeout), only static icons are shown and the UI remains fully functional.<br/>
+<span class="image-wrap" style=""><img src="/rest/api/3/attachment/content/847341" alt="Screenshot 2025-11-06 at 10.53.20.png" width="293" style="border: 0px solid black" /></span><br/>
+<span class="image-wrap" style=""><img src="/rest/api/3/attachment/content/836031" alt="Screenshot 2025-10-16 at 15.46.19.png" width="554" style="border: 0px solid black" /></span></li>
+</ol>
+
+
+<h3><a name="Possiblesolution"></a>Possible solution</h3>
+
+<p>In the UI, there are links to dashboards for each database and cluster. Currently, the UI gets these links from Meta database, but I’d like to change that so the management of dashboard lists happens on the Grafana side. On the Grafana side, a list of dashboards will be configured for each tag, and Meta will know the tags that the UI can use to load the corresponding links.</p>
+            <br/>
+        </td>
+    </tr>
+    </table>
+
+    <br/>
+
+    <table cellpadding="2" cellspacing="0" border="0" width="100%" align="center">
+    <tr>
+        <td bgcolor="#bbbbbb" width="1%" nowrap align="center">
+            &nbsp;<font color="#ffffff"><b>Комментарии</b></font>&nbsp;
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    </table>
+
+    <table cellpadding="0" cellspacing="0" border="0" width="100%" class="grid" style="margin: 0;">
+                <tr id="comment-header-6513240"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                id="word_commented_712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f">
+                    Andrei Rykov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">09/мая/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-6513240"><td bgcolor="#ffffff">
+            <p>As far as I can see, and the frontend team confirms this, it's currently not possible to define links dynamically.<br/>
+In the latest version of the UI, for a cluster you can define:<br/>
+<tt>"link_cores": "Coredumps",</tt><br/>
+<tt>"link_logging": "Logging",</tt><br/>
+<tt>"link_slo-logs": "SLO Logs"</tt><br/>
+For a database:<br/>
+<tt>"field_monitoring-link": "Monitoring",</tt><br/>
+<tt>"field_logs-link": "Logs"</tt></p>
+
+<p>After the holidays, I’ll discuss the required changes.</p>
+        </td></tr>
+                <tr id="comment-header-6524581"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                id="word_commented_712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f">
+                    Andrei Rykov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">15/мая/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-6524581"><td bgcolor="#ffffff">
+            <p>It seems that for database info page, we could use list of links from <a href="https://docs.nebius.dev/en/ydb/quickstart#monitoring" class="external-link" rel="nofollow noreferrer">ydb docs</a><br/>
+<a href="https://grafana.nebius.dev/d/ydb_dbstatus/db-status?orgId=1&amp;refresh=30s&amp;from=now-5m&amp;to=now&amp;timezone=browser&amp;var-ds=b0269287-b776-4e5e-b980-7a731fe272e8&amp;var-workspace=ydb-global&amp;var-database=%2Ftesting-global%2Fbilling" class="external-link" rel="nofollow noreferrer">DB status</a><br/>
+<a href="https://grafana.nebius.dev/d/dedicated-topic-consumer/dedicated-topic-consumer?orgId=1&amp;from=now-7d&amp;to=now&amp;timezone=browser&amp;var-ds=fc872d93-d988-491c-83cd-19249cb962b0&amp;var-workspace=ydb-common&amp;var-bucket=datastreams_serverless&amp;var-database=%2Feu-north1-common%2Frepo-reflog&amp;var-topic=$__all&amp;var-consumer=$__all" class="external-link" rel="nofollow noreferrer">Dedicated Topic Consumer</a><br/>
+<a href="https://grafana.nebius.dev/d/b3da8a06-387a-4af6-b8f6-055448f31cb2/user-dashboard-dedicated?orgId=1&amp;from=now-6h&amp;to=now&amp;timezone=browser&amp;var-ds=fc872d93-d988-491c-83cd-19249cb962b0&amp;var-workspace=ydb-common&amp;var-database=%2Feu-north1-common%2Ftemporal" class="external-link" rel="nofollow noreferrer">User Dashboard</a><br/>
++ logs</p>
+
+<p>Vlad Kuznecov mentioned these dashboards:<br/>
+<a href="https://grafana.nebius.dev/goto/xiSvjIaHg?orgId=1" class="external-link" rel="nofollow noreferrer">https://grafana.nebius.dev/goto/xiSvjIaHg?orgId=1</a><br/>
+<a href="https://grafana.nebius.dev/goto/hv5djS-NR?orgId=1" class="external-link" rel="nofollow noreferrer">https://grafana.nebius.dev/goto/hv5djS-NR?orgId=1</a><br/>
+<a href="https://grafana.nebius.dev/goto/YrYOjI-Hg?orgId=1" class="external-link" rel="nofollow noreferrer">https://grafana.nebius.dev/goto/YrYOjI-Hg?orgId=1</a></p>
+        </td></tr>
+                <tr id="comment-header-6532954"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                id="word_commented_712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f">
+                    Andrei Rykov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">20/мая/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-6532954"><td bgcolor="#ffffff">
+            <p>Suggested the ticket to <a href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A5fb7672a-c096-4402-b16d-578768b5c0a3" class="user-hover" rel="712020:5fb7672a-c096-4402-b16d-578768b5c0a3" data-account-id="712020:5fb7672a-c096-4402-b16d-578768b5c0a3" accountid="712020:5fb7672a-c096-4402-b16d-578768b5c0a3" rel="noreferrer">Valerii Sidorenko</a></p>
+
+<p>UI ticket, not assigned yet <a href="https://github.com/ydb-platform/ydb-embedded-ui/issues/2304" title="smart-link" class="external-link" rel="nofollow noreferrer">https://github.com/ydb-platform/ydb-embedded-ui/issues/2304</a> </p>
+        </td></tr>
+                <tr id="comment-header-6585152"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                id="word_commented_712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f">
+                    Andrei Rykov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">12/июн/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-6585152"><td bgcolor="#ffffff">
+            <ul>
+	<li>I'm clarifying how the list is specified.</li>
+	<li>We need to wait for the update UI to <tt>9.6.0</tt> <a href="https://nebius.atlassian.net/browse/NBYDB-1216" title="smart-link" class="external-link" rel="nofollow noreferrer">https://nebius.atlassian.net/browse/NBYDB-1216</a></li>
+	<li>Needs a design for specifying links in JSON format</li>
+	<li>Needs an implementation in the Nebius UI.</li>
+	<li>Need update tables in meta testing db and check new feature on ydb.testing.nebius.dev</li>
+	<li>Need update tables in meta prod db. I’ll likely involve Egor.</li>
+</ul>
+
+        </td></tr>
+                <tr id="comment-header-6601312"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7"
+                id="word_commented_712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A9b6f6940-7c5c-486d-b283-abfb0ef8b2e7">
+                    Alexander Smirnov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">20/июн/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-6601312"><td bgcolor="#ffffff">
+            <p>Andrey, may I know if there’s a design for the solution published anywhere?</p>
+        </td></tr>
+                <tr id="comment-header-6622756"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                id="word_commented_712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f">
+                    Andrei Rykov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">30/июн/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-6622756"><td bgcolor="#ffffff">
+            <h1><a name="Generatingmonitoringlinks"></a>Generating monitoring links</h1>
+
+<p>The UI receives a response from the meta <tt>/db_clusters</tt>, which includes a new field called <tt>Links</tt><b>.</b><br/>
+This field contains a JSON object with link templates, UI could arrange the link from the teplate, display link name, and optionally an icon.</p>
+
+<p>If the <tt>Links</tt> field is not set or empty, links are derived from the <tt>solomon</tt> and <tt>logging_link</tt> fields as before.</p>
+
+<h1><a name="LinkJSONformat"></a>Link JSON format</h1>
+
+<p>The <tt>Links</tt> field in the response contains two arrays:</p>
+
+<ul>
+	<li><tt>links</tt> - a list of reusable link definitions</li>
+	<li><tt>placements</tt> — rules for assigning links to specific entities and UI scopes</li>
+</ul>
+
+
+<p>Each link in the <tt>links</tt> array includes:</p>
+
+<ul>
+	<li><tt>id</tt> - a unique identifier used for reference in placements</li>
+	<li><tt>title</tt> - the name shown in the UI</li>
+	<li><tt>template</tt> - a URL template with optional placeholder ({{
+{dbName}}})<br/>
+* <tt>icon</tt> - the icon name referencing an SVG asset<br/>
+<br/>
+Each entry in the <tt>placements</tt> array defines how links should appear:<br/>
+<br/>
+* <tt>entity</tt> - the object type the links apply to (<tt>cluster</tt>, <tt>dedicated</tt>, or <tt>serverless</tt>)<br/>
+* <tt>scope</tt> - the UI context where the links are shown (<tt>dashboard</tt>, <tt>info</tt>, or <tt>default</tt>)<br/>
+* <tt>links</tt> - an array of link <tt>id}}s from the {{links</tt> section<br/>
+<br/>
+Placements with <tt>scope = "default"</tt> are applied automatically unless overridden by a more specific scope for the same <tt>entity</tt>.<br/>
+<br/>
+<b>Example:</b><br/>
+
+<div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
+<pre></pre>
+</div></div>{<br/>
+  "links": [<br/>
+    {<br/>
+      "id": "db_logs_general",<br/>
+      "title": "Logs",<br/>
+      "template": "https://logs.example.com/view?db={dbName}
+<p>",<br/>
+      "icon": "logs"<br/>
+    },<br/>
+    </p>
+{
+      "id": "cluster_monitoring",
+      "title": "Monitoring",
+      "template": "https://grafana.example.com/d/cluster-dashboard",
+      "icon": "monitoring"
+    }
+<p>,<br/>
+    </p>
+{
+      "id": "coredumps",
+      "title": "Coredumps",
+      "template": "https://core.example.com/view",
+      "icon": "coredump"
+    }
+<p>,<br/>
+    {<br/>
+      "id": "dedicated_mon",<br/>
+      "title": "Monitoring",<br/>
+      "template": "https://grafana.example.com/d/dedicated-dashboard?var-db=</p>
+{dbName}",<br/>
+      "icon": "monitoring"<br/>
+    },<br/>
+  ],<br/>
+  "placements": [<br/>
+    {
+      "entity": "cluster",
+      "scope": "dashboard",
+      "links": ["cluster_monitoring"]
+    },<br/>
+    {
+      "entity": "cluster",
+      "scope": "info",
+      "links": ["coredumps"]
+    },<br/>
+    {
+      "entity": "dedicated",
+      "scope": "dashboard",
+      "links": ["db_logs_general", "dedicated_mon"]
+    },<br/>
+    {
+      "entity": "dedicated",
+      "scope": "default",
+      "links": ["db_logs_general"]
+    },<br/>
+    {
+      "entity": "serverless",
+      "scope": "info",
+      "links": ["db_logs_general"]
+    }<br/>
+  ]<br/>
+}<div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
+<pre></pre>
+</div></div><br/>
+<br/>
+h1. Link creation<br/>
+<br/>
+When generating links in the UI:<br/>
+<br/>
+* For <b>clusters</b>, placements are selected where <tt>entity = "cluster"</tt> and <tt>scope</tt> matches the current UI context.<br/>
+* For <b>databases</b>, the <tt>entity</tt> is derived from the database type (<tt>dedicated</tt> or <tt>serverless</tt>).<br/>
+<br/>
+If a placement with the required <tt>scope</tt> exists, it is used. Otherwise, a placement with <tt>scope = "default"</tt> is applied for that entity.<br/>
+<br/>
+If both are present, links from the specific scope <b>override or extend</b> the default set. Duplicate IDs are allowed and handled according to UI logic.<br/>
+<br/>
+In all templates, the {{{dbName}
+<p>}} placeholder is replaced with the actual database name.</p></li>
+</ul>
+
+
+<h1><a name="Theiconcanbesettooneofthepredefinedtypes%3A"></a>The icon can be set to one of the predefined types:</h1>
+
+<ul>
+	<li><tt>logs</tt> - <a href="https://gravity-ui.com/icons?icon=FileText" class="external-link" rel="nofollow noreferrer">https://gravity-ui.com/icons?icon=FileText</a></li>
+	<li><tt>monitoring</tt> - <a href="https://gravity-ui.com/icons?icon=ChartLine" class="external-link" rel="nofollow noreferrer">https://gravity-ui.com/icons?icon=ChartLine</a></li>
+	<li><tt>coredump</tt> - <a href="https://gravity-ui.com/icons?icon=Bug" class="external-link" rel="nofollow noreferrer">https://gravity-ui.com/icons?icon=Bug</a></li>
+	<li><tt>documentaion</tt>- <a href="https://gravity-ui.com/icons?icon=BookOpen" class="external-link" rel="nofollow noreferrer">https://gravity-ui.com/icons?icon=BookOpen</a></li>
+	<li><tt>link</tt> (used as default if not specified) - <a href="https://gravity-ui.com/icons?icon=Link" class="external-link" rel="nofollow noreferrer">https://gravity-ui.com/icons?icon=Link</a></li>
+</ul>
+
+
+<h1><a name="Expectedresult"></a>Expected result</h1>
+
+<p>There are several places in the UI where links are displayed. </p>
+
+<ul>
+	<li><tt><span class="error">&#91;cluster&#93;</span><span class="error">&#91;dashboard&#93;</span></tt> On the clusters list page, each link can be shown with its name.</li>
+	<li><tt><span class="error">&#91;cluster&#93;</span><span class="error">&#91;info&#93;</span></tt> On the cluster page, each link can be shown with its name.</li>
+	<li><tt><span class="error">&#91;dedicated/serverless&#93;</span><span class="error">&#91;dashboard&#93;</span></tt> On the database list page, each link can be shown with its name.</li>
+	<li><tt><span class="error">&#91;dedicated/serverless&#93;</span><span class="error">&#91;info&#93;</span></tt> On the database page, at this stage, only the link icons can be displayed, with their names shown in a tooltip.</li>
+</ul>
+
+
+<p><b>cluster list page</b></p>
+
+<p><span class="image-wrap" style=""><img src="/rest/api/3/attachment/content/779857" alt="image-20250703-194232.png" height="484" width="1336" style="border: 0px solid black" /></span></p>
+
+<p><b>cluster page</b></p>
+
+<p><span class="image-wrap" style=""><img src="/rest/api/3/attachment/content/778773" alt="image-20250702-135842.png" height="770" width="831" style="border: 0px solid black" /></span></p>
+
+
+<p><b>database page</b></p>
+
+<p><span class="image-wrap" style=""><img src="/rest/api/3/attachment/content/778772" alt="image-20250702-140129.png" height="526" width="865" style="border: 0px solid black" /></span></p>
+
+
+<h1><a name="IntegrationwithUI"></a>Integration with UI</h1>
+
+<p>The table values in the META database need to be updated, and the Nebius UI needs to be updated — these actions can be done in any order.</p>
+
+<h1><a name="Affectedcomponents"></a>Affected components</h1>
+
+<p>We need a change in embedded-ui (already done) and a change in Nebius UI to support parsing the link JSON.<br/>
+No changes are needed in YDB.</p>
+        </td></tr>
+                <tr id="comment-header-6626092"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                id="word_commented_712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f">
+                    Andrei Rykov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">01/июл/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-6626092"><td bgcolor="#ffffff">
+            <p><a href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" class="user-hover" rel="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" data-account-id="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" accountid="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" rel="noreferrer">Alexander Smirnov</a> We still need one more update to use the new format. I thought the embedded-ui change was enough, but I misunderstood. I’ve added the steps to the plan.</p>
+
+<p>Below a draft JSON format for the link. It still needs to be checked, including probably with <a href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3Aef788c06-e972-41e1-b982-c7ef30523c4e" class="user-hover" rel="712020:ef788c06-e972-41e1-b982-c7ef30523c4e" data-account-id="712020:ef788c06-e972-41e1-b982-c7ef30523c4e" accountid="712020:ef788c06-e972-41e1-b982-c7ef30523c4e" rel="noreferrer">Maxim Gorbunov</a> . </p>
+        </td></tr>
+                <tr id="comment-header-6626167"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                id="word_commented_712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f">
+                    Andrei Rykov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">01/июл/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-6626167"><td bgcolor="#ffffff">
+            <h1><a name="Generatingmonitoringlink%28OldWay%29"></a>Generating monitoring link (Old Way)</h1>
+
+<p>UI code <a href="https://gitlab.nebius.dev/nebius/nebo/-/blob/trunk/ui/apps/ydb-ui/src/ui/services/monitoring.ts?ref_type=heads" class="external-link" rel="nofollow noreferrer">https://gitlab.nebius.dev/nebius/nebo/-/blob/trunk/ui/apps/ydb-ui/src/ui/services/monitoring.ts?ref_type=heads</a></p>
+
+<div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
+<pre>{
+  "monitoring_url": "https://grafana.example.com",
+  "serverless_dashboard": "user-dashboard-serverless",
+  "dedicated_dashboard": "user-dashboard-dedicated",
+  "cluster_dashboard": "cluster-overview",
+  "params": {
+    "orgId": "1",
+    "var-ds": "b0269287-b776-4e5e-b980-7a731fe272e8",
+    "var-workspace": "ydb-global"
+  }
+}</pre>
+</div></div>
+
+<h3><a name="Clusterlink"></a>Cluster link</h3>
+
+<ul>
+	<li>The base URL is <tt>monitoring_url</tt>.</li>
+	<li>The path segment is appended using <tt>cluster_dashboard</tt>.</li>
+	<li>All fields from <tt>params</tt> are added as query parameters.</li>
+	<li>The following defaults are added:
+	<ul>
+		<li><tt>from = now-24h</tt></li>
+		<li><tt>to = now</tt></li>
+	</ul>
+	</li>
+</ul>
+
+
+<p><b>Example result:</b></p>
+
+<p><a href="https://grafana.example.com/cluster-overview?orgId=1&amp;var-ds=b0269287-b776-4e5e-b980-7a731fe272e8&amp;var-workspace=ydb-global&amp;from=now-24h&amp;to=now" class="external-link" rel="nofollow noreferrer">https://grafana.example.com/cluster-overview?orgId=1&amp;var-ds=b0269287-b776-4e5e-b980-7a731fe272e8&amp;var-workspace=ydb-global&amp;from=now-24h&amp;to=now</a></p>
+
+<hr />
+
+<h3><a name="Databaselink"></a>Database link</h3>
+
+<ul>
+	<li>The base URL is <tt>monitoring_url</tt>.</li>
+	<li>The path segment is appended using:
+	<ul>
+		<li><tt>dedicated_dashboard</tt> for dedicated databases.</li>
+		<li><tt>serverless_dashboard</tt> for serverless databases.</li>
+	</ul>
+	</li>
+	<li>All fields from <tt>params</tt> are added as query parameters.</li>
+	<li>An additional parameter is added:
+	<ul>
+		<li><tt>var-database = &lt;database name&gt;</tt></li>
+	</ul>
+	</li>
+	<li>The following defaults are added:
+	<ul>
+		<li><tt>from = now-24h</tt></li>
+		<li><tt>to = now</tt></li>
+	</ul>
+	</li>
+</ul>
+
+
+<p><b>Example result:</b></p>
+
+<p><a href="https://grafana.example.com/user-dashboard-serverless?orgId=1&amp;var-ds=b0269287-b776-4e5e-b980-7a731fe272e8&amp;var-workspace=ydb-global&amp;var-database=%2Ftesting-global%2Fcompute-api-shadow&amp;from=now-24h&amp;to=now" class="external-link" rel="nofollow noreferrer">https://grafana.example.com/user-dashboard-serverless?orgId=1&amp;var-ds=b0269287-b776-4e5e-b980-7a731fe272e8&amp;var-workspace=ydb-global&amp;var-database=%2Ftesting-global%2Fcompute-api-shadow&amp;from=now-24h&amp;to=now</a></p>
+        </td></tr>
+                <tr id="comment-header-6626408"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7"
+                id="word_commented_712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A9b6f6940-7c5c-486d-b283-abfb0ef8b2e7">
+                    Alexander Smirnov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">01/июл/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-6626408"><td bgcolor="#ffffff">
+            <p>I do not see the motivation / problem statement in the text which describes the changes. Do we solve any specific issue? If so, please describe the issue. Or bring new opportunities? </p>
+        </td></tr>
+                <tr id="comment-header-6635896"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7"
+                id="word_commented_712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A9b6f6940-7c5c-486d-b283-abfb0ef8b2e7">
+                    Alexander Smirnov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">04/июл/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-6635896"><td bgcolor="#ffffff">
+            <p>Discussed:</p>
+
+<ol>
+	<li>Proposed design implies manual management for all links inside the meta database. That means only those dashboards which are explicitly listed will be shown, and listings for every cluster should be populated in sync. It also means adding new dashboards or clusters require large amount of manual changes, what can bring us to the outdated and incomplete data.</li>
+	<li>At the same time, there’s only one installation of Grafana for testing and production, and only one set of YDB dashboards in it, applicable to any cluster and database, inside the ‘YDB’ folder.</li>
+	<li>The variable part is only workspace, data source, and database.</li>
+	<li>The problem is that Grafana does not accept variables on the page with dashboards listing, so we cannot just bring users to the page with the list of dashboards maintaining the context of some cluster. User also should differentiate between all dashboards and those ‘public’ made by the YDB team for users.</li>
+	<li>It makes sense to query dashboards directly from Grafana from the configured ‘YDB’ folder, using its API, and store only variable part in the meta database. In the YDB UI we show the list with links to the dashboards with assigned variables.</li>
+	<li>We can agree/configure the set of labels in Grafana to indicate ‘main’ dashboards to be shown initially.</li>
+</ol>
+
+        </td></tr>
+                <tr id="comment-header-6643608"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:ef788c06-e972-41e1-b982-c7ef30523c4e"
+                id="word_commented_712020:ef788c06-e972-41e1-b982-c7ef30523c4e"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3Aef788c06-e972-41e1-b982-c7ef30523c4e">
+                    Maxim Gorbunov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">08/июл/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-6643608"><td bgcolor="#ffffff">
+            <p><a href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f" class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f" data-account-id="712020:8b69336d-51ba-4e44-920f-ddf22872c09f" accountid="712020:8b69336d-51ba-4e44-920f-ddf22872c09f" rel="noreferrer">Andrei Rykov</a> <a href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" class="user-hover" rel="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" data-account-id="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" accountid="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" rel="noreferrer">Alexander Smirnov</a> why this ticket is paused?</p>
+
+<p>We already have 2 dashboards - for dedicated and serverless databases</p>
+
+<p>And yes, we store 2 variables per each cluster - workspace and ds (datasource, which is different for different envs). I see no problem storing these parameters in meta database (especially because it’s stored IAC <a href="https://gitlab.nebius.dev/nebius/nebo/-/blob/trunk/nebius/ydb/tools/mvp-table/clusters-prod.yaml?ref_type=heads#L41-44" class="external-link" rel="nofollow noreferrer">https://gitlab.nebius.dev/nebius/nebo/-/blob/trunk/nebius/ydb/tools/mvp-table/clusters-prod.yaml?ref_type=heads#L41-44</a>)</p>
+        </td></tr>
+                <tr id="comment-header-6908167"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                id="word_commented_712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f">
+                    Andrei Rykov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">09/окт/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-6908167"><td bgcolor="#ffffff">
+            <p>It has become clear that YDB UI dashboards links can be built through Grafana tags, which solves several problems at once:</p>
+
+<ul>
+	<li>All dashboard management could be moved to Grafana side</li>
+	<li>Navigation between dashboards with the same tag becomes possible without manually specifying a list of parameters.</li>
+</ul>
+
+
+<p><b>The new way of defining links</b> uses Grafana tag–based link generation. It does not affect the existing way. If links are defined using the old format, they will still be displayed in the UI exactly as before. If both the new and the old formats are used, both sets of links will be displayed in the UI.</p>
+
+<p>The new way of defining links includes updates on the meta and UI sides.</p>
+
+<p><b>Meta update</b><br/>
+New configuration block <tt>grafana</tt> defines all settings related to synchronization with Grafana.<br/>
+Each cluster uses the common list of links defined in <b>cluster_links</b>; only the parameters differ, as they are populated individually for each cluster.<br/>
+The same logic applies to databases: there are two predefined link lists - one for <b>dedicated</b> databases and another for <b>serverless</b> databases.<br/>
+All databases of the same type share the same set of links, but their parameters are populated separately for each specific database.</p>
+
+<p><b>Example:</b></p>
+
+<div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
+<pre>meta:
+  meta_api_endpoint: grpcs://shared-1-grpc.ydb-global.svc.cluster.local:2135
+  meta_database: /testing-global/ydb-ui
+  meta_database_token_name: testing
+  db_user_token_access: true
+  grafana:                            # Grafana synchronization block
+    url: https://grafana.nebius.dev/  # URL of Grafana instance for fetching dashboards by tags
+    cluster_links:
+      - url: https://ydb.tech/docs/en/
+        title: Documentation
+        icon: documentation
+      - url: https://grafana.nebius.dev/d/edu4pqfd83pj4d/cluster-overview-wip
+        params: &amp;cluster_params orgId=1&amp;from=now-6h&amp;to=now&amp;timezone=browser&amp;var-ds={{datasource}}&amp;var-workspace={{k8s_namespace}}
+        title: Overview
+        icon: monitoring
+      - fetch_by_tag: ydb-cluster
+        params: *cluster_params
+    dedicated_links:
+      - fetch_by_tag: ydb-dedicated
+        params: &amp;database_params orgId=1&amp;from=now-6h&amp;to=now&amp;timezone=browser&amp;var-ds={{datasource}}&amp;var-workspace={{k8s_namespace}}&amp;var-database={{database}}
+      - url: https://grafana.nebius.dev/explore
+        params: &amp;logs_params schemaVersion=1&amp;panes=%7B%22pcw%22:%7B%22datasource%22:%22{{datasource}}%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7B__workspace__%3D%5C%22{{k8s_namespace}}%5C%22,%20__bucket__%3D%5C%22ydb%5C%22,%20database%3D%5C%22%2F{{database}}%5C%22%7D%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22{{datasource}}%22%7D,%22editorMode%22:%22code%22,%22direction%22:%22backward%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&amp;orgId=1
+        title: Logs
+        icon: logs
+    serverless_links:
+      - fetch_by_tag: ydb-serverless
+        params: *database_params
+      - url: https://grafana.nebius.dev/explore
+        params: *logs_params
+        title: Logs
+        icon: logs</pre>
+</div></div>
+
+<p>There are two ways to define links within each block:</p>
+
+<ol>
+	<li><b>With</b> <tt>url</tt> <b>parameter.</b> In this case, it is necessary to define a <tt>title</tt>, <tt>icon</tt> and <tt>params</tt>.</li>
+</ol>
+
+
+<ul>
+	<li><tt>url</tt> - a link that will be directly accessible in the UI.</li>
+	<li><tt>title</tt> - display name of the link.</li>
+	<li><tt>icon</tt> - name of an icon. The list of the names is predefined
+	<ul>
+		<li><tt>logs</tt> - <a href="https://gravity-ui.com/icons?icon=FileText" title="smart-link" class="external-link" rel="nofollow noreferrer">https://gravity-ui.com/icons?icon=FileText</a></li>
+		<li><tt>monitoring</tt> - <a href="https://gravity-ui.com/icons?icon=ChartLine" title="smart-link" class="external-link" rel="nofollow noreferrer">https://gravity-ui.com/icons?icon=ChartLine</a></li>
+		<li><tt>coredump</tt> - <a href="https://gravity-ui.com/icons?icon=Bug" title="smart-link" class="external-link" rel="nofollow noreferrer">https://gravity-ui.com/icons?icon=Bug</a></li>
+		<li><tt>documentaion</tt>- <a href="https://gravity-ui.com/icons?icon=BookOpen" title="smart-link" class="external-link" rel="nofollow noreferrer">https://gravity-ui.com/icons?icon=BookOpen</a></li>
+		<li><tt>link</tt> (used as default if not specified) - <a href="https://gravity-ui.com/icons?icon=Link" title="smart-link" class="external-link" rel="nofollow noreferrer">https://gravity-ui.com/icons?icon=Link</a></li>
+	</ul>
+	</li>
+	<li><tt>params</tt> - an optional list of parameters appended to the URL. You can use double curly braces {{<tt>...</tt>}} inside the parameters to insert dynamic variables (for example, {{<tt>datasource</tt>}}, {{<tt>k8s_namespace</tt>}}, or {{<tt>database</tt>}}). Meta replaces these placeholders with actual cluster information from Meta`s database. If the cluster data does not contain a value for a given placeholder, the curly braces are kept as is and returned in the Meta response.</li>
+</ul>
+
+
+<ol>
+	<li><b>With</b> <tt>fetch_by_tag</tt> <b>parameter.</b> It uses only <tt>params</tt></li>
+</ol>
+
+
+<ul>
+	<li><tt>fetch_by_tag</tt> - allows loading links by tag via a Grafana API request.</li>
+	<li><tt>params</tt> - described above, appended to each URL loaded by tag.</li>
+</ul>
+
+
+<p>If the <tt>grafana</tt> configuration block is available, meta provides new links information in the <tt>/meta/meta/db_clusters</tt> JSON response.</p>
+
+<div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
+<pre>{
+    "clusters": [
+        {
+            "owner": "stunder",
+            "k8s_namespace": "ydb-global",
+            "location": null,
+            ...
+            "cluster_links": [
+              {
+                "url": "https://ydb.tech/docs/en/",
+                "title": "Documentation",
+                "icon": "documentation"
+              },
+              {
+                "url": "https://grafana.nebius.dev/d/edu4pqfd83pj4d/cluster-overview-wip",
+                "params": "orgId=1&amp;from=now-6h&amp;to=now&amp;timezone=browser&amp;b0269287-b776-4e5e-b980-7a731fe272e8&amp;var-workspace=ydb-global"
+                "title": "Overview",
+                "icon": "monitoring"
+              },
+              {
+                "fetch_by_tag": "https://grafana.nebius.dev/api/search?tag=ydb-cluster",
+                "params": "orgId=1&amp;from=now-6h&amp;to=now&amp;timezone=browser&amp;b0269287-b776-4e5e-b980-7a731fe272e8&amp;var-workspace=ydb-global"
+                "icon": "monitoring"
+              }
+            ]
+            "dedicated_links": [
+              {
+                "fetch_by_tag": "https://grafana.nebius.dev/api/search?tag=ydb-dedicated",
+                "params": "orgId=1&amp;from=now-6h&amp;to=now&amp;timezone=browser&amp;var-ds=b0269287-b776-4e5e-b980-7a731fe272e8&amp;var-workspace=ydb-global&amp;var-database={{database}}",
+                "icon": "monitoring"
+              },
+              {
+                "url": "https://grafana.nebius.dev/explore",
+                "params": "schemaVersion=1&amp;panes=%7B%22pcw%22:%7B%22datasource%22:%22b0269287-b776-4e5e-b980-7a731fe272e8%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7B__workspace__%3D%5C%22ydb-global%5C%22,%20__bucket__%3D%5C%22ydb%5C%22,%20database%3D%5C%22%2F{{database}}%5C%22%7D%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22b0269287-b776-4e5e-b980-7a731fe272e8%22%7D,%22editorMode%22:%22code%22,%22direction%22:%22backward%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&amp;orgId=1",
+                "title": "Logs",
+                "icon": "logs"
+              }
+            ],
+            "serverless_links": [
+              {
+                "fetch_by_tag": "https://grafana.nebius.dev/api/search?tag=ydb-serverless",
+                "params": "orgId=1&amp;from=now-6h&amp;to=now&amp;timezone=browser&amp;var-ds=b0269287-b776-4e5e-b980-7a731fe272e8&amp;var-workspace=ydb-global&amp;var-database={{database}}",
+                "icon": "monitoring"
+              },
+              {
+                "url": "https://grafana.nebius.dev/explore",
+                "params": "schemaVersion=1&amp;panes=%7B%22pcw%22:%7B%22datasource%22:%22b0269287-b776-4e5e-b980-7a731fe272e8%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7B__workspace__%3D%5C%22ydb-global%5C%22,%20__bucket__%3D%5C%22ydb%5C%22,%20database%3D%5C%22%2F{{database}}%5C%22%7D%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22b0269287-b776-4e5e-b980-7a731fe272e8%22%7D,%22editorMode%22:%22code%22,%22direction%22:%22backward%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&amp;orgId=1",
+                "title": "Logs",
+                "icon": "logs"
+              }
+            ]
+        }
+    ]
+}</pre>
+</div></div>
+
+<p>The old information is left unchanged by meta. Only fields <tt>cluster_links</tt>, <tt>dedicated_links</tt>, <tt>serverless_links</tt> are added.</p>
+
+<p><b>UI update</b></p>
+
+<p>The UI display new links if the cluster information new field. UI adds them to the existing links that are added using the old method.</p>
+
+<p>There are two ways to define links with new way:</p>
+
+<ol>
+	<li>using <tt>url</tt> field. The UI must replace {{<tt>database</tt>}} in the URL with the real database name.</li>
+</ol>
+
+
+<p>Then it can show this name using the <tt>title</tt> field.</p>
+
+<ol>
+	<li>using <tt>fetch_by_tag</tt>. To load dashboards list by tag, the UI uses the well-known Grafana URL. It can get the dashboard name from the Grafana response.<br/>
+<tt><a href="https://grafana.nebius.dev/api/search?tag=ydb-common" class="external-link" rel="nofollow noreferrer">https://grafana.nebius.dev/api/search?tag=ydb-common</a></tt>.<br/>
+The UI can add a list of parameters for each dashboard using <tt>params</tt> field. The UI must replace {{<tt>database</tt>}} in the URL with the real database name. </li>
+</ol>
+
+
+<p><b>Grafana manage</b></p>
+
+<p>Grafana tags can be defined in different ways, but two factors should be considered that can improve or degrade the user experience:</p>
+
+<ul>
+	<li>It is better not to combine database and cluster dashboards under the same tag, as they use different parameter sets. Because of this, parameters may change when navigating between pages.</li>
+	<li>For a user of a dedicated database, it is important to navigate to dashboards supporting dedicated databases. The same applies to serverless.</li>
+</ul>
+
+
+<p>Proposed list for adding tags:</p>
+
+<ul>
+	<li><tt>ydb-databases</tt> - database dashboards used for the dropdown list in Grafana (can include both dedicated and serverless dashboards).</li>
+	<li><tt>ydb-dedicated</tt>, <tt>ydb-serverless</tt> - defined in the meta database; use a smaller set of dashboards than <tt>ydb-databases</tt>, focusing on those most useful to the user.</li>
+	<li><tt>ydb-clusters</tt> – cluster dashboards defined in the meta database, used for the dropdown list in Grafana.</li>
+</ul>
+
+
+<p>Tags management:</p>
+
+<ul>
+	<li>Combine dashboards into one tag.
+	<ul>
+		<li>Go to dashboard - <tt>Settings</tt> - <tt>Tags</tt></li>
+		<li>Add the required tag.</li>
+	</ul>
+	</li>
+	<li>Add links on the dashboard by tag.
+	<ul>
+		<li>Go to dashboard - <tt>Settings</tt> - <tt>Links</tt> - <tt>New link</tt></li>
+		<li>Choose type - <tt>Dashboards</tt></li>
+		<li>Add the required tag.</li>
+		<li>Enable <tt>Show as dropdown</tt>, <tt>Include current time range</tt>,  <tt>Include current template variable values</tt></li>
+	</ul>
+	</li>
+</ul>
+
+
+<p><b>Steps for implementation:</b></p>
+
+<ul>
+	<li>Add the tags <tt>ydb-databases</tt> and <tt>ydb-clusters</tt>, and configure navigation between dashboards in Grafana.</li>
+	<li>Add the tags <tt>ydb-dedicated</tt> and <tt>ydb-serverless</tt>, leaving them empty for now.</li>
+	<li>Clarify how new clusters are added to the Meta database. Check whether there are any scripts or automated processes that insert cluster information into the Meta database. Make changes to the scripts or documentation.</li>
+	<li>Add changes on the meta side. Deploy meta and verify that the <tt>/meta/db_clusters</tt> response has changed and now includes new fields: <tt>cluster_links</tt> etc.</li>
+	<li>Create the new <tt>datasource</tt> column in meta database. And fill it with a value from grafana for each cluster. Add fetching by tag in meta configuration with <tt>ydb-dedicated</tt> and <tt>ydb-serverless</tt> tags.</li>
+	<li>Verify that the UI update works (it may be ready earlier).</li>
+	<li>Add the necessary dashboards to the <tt>ydb-dedicated</tt> and <tt>ydb-serverless</tt> tags.</li>
+	<li>Delete old links from meta database.</li>
+</ul>
+
+        </td></tr>
+                <tr id="comment-header-6921826"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                id="word_commented_712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f">
+                    Andrei Rykov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">13/окт/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-6921826"><td bgcolor="#ffffff">
+            <p><a href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" class="user-hover" rel="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" data-account-id="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" accountid="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" rel="noreferrer">Alexander Smirnov</a> <a href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A24a48bb5-cfef-4c77-bd16-b3b4f81c5b4e" class="user-hover" rel="712020:24a48bb5-cfef-4c77-bd16-b3b4f81c5b4e" data-account-id="712020:24a48bb5-cfef-4c77-bd16-b3b4f81c5b4e" accountid="712020:24a48bb5-cfef-4c77-bd16-b3b4f81c5b4e" rel="noreferrer">Vladislav Kuznecov</a> I’ve updated the description based on our discussion last Thursday. Please take a quick look if you get a chance.</p>
+
+<p>Main changes:</p>
+
+<ul>
+	<li>Link definitions are now in the Meta configuration.</li>
+	<li>Placeholders for tag-based links are used in the params field.</li>
+	<li>The Grafana instance URL is also moved to the configuration.</li>
+</ul>
+
+        </td></tr>
+                <tr id="comment-header-6935863"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                id="word_commented_712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f">
+                    Andrei Rykov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">16/окт/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-6935863"><td bgcolor="#ffffff">
+            <p><a href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" class="user-hover" rel="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" data-account-id="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" accountid="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" rel="noreferrer">Alexander Smirnov</a> <a href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A24a48bb5-cfef-4c77-bd16-b3b4f81c5b4e" class="user-hover" rel="712020:24a48bb5-cfef-4c77-bd16-b3b4f81c5b4e" data-account-id="712020:24a48bb5-cfef-4c77-bd16-b3b4f81c5b4e" accountid="712020:24a48bb5-cfef-4c77-bd16-b3b4f81c5b4e" rel="noreferrer">Vladislav Kuznecov</a> Added general user scanario in description. Please take a look.</p>
+        </td></tr>
+                <tr id="comment-header-6935969"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7"
+                id="word_commented_712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A9b6f6940-7c5c-486d-b283-abfb0ef8b2e7">
+                    Alexander Smirnov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">16/окт/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-6935969"><td bgcolor="#ffffff">
+            <p><a href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f" class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f" data-account-id="712020:8b69336d-51ba-4e44-920f-ddf22872c09f" accountid="712020:8b69336d-51ba-4e44-920f-ddf22872c09f" rel="noreferrer">Andrei Rykov</a> Looks like nothing is changing in comparison to the existing UI, where I see the same ‘Monitoring’ link. Then what are we going to do?</p>
+        </td></tr>
+                <tr id="comment-header-6936117"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7"
+                id="word_commented_712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A9b6f6940-7c5c-486d-b283-abfb0ef8b2e7">
+                    Alexander Smirnov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">16/окт/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-6936117"><td bgcolor="#ffffff">
+            <p><a href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f" class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f" data-account-id="712020:8b69336d-51ba-4e44-920f-ddf22872c09f" accountid="712020:8b69336d-51ba-4e44-920f-ddf22872c09f" rel="noreferrer">Andrei Rykov</a> Have read it more carefully, and found that the pictures are ‘as is’, while in the text above there are descriptions of what is to be changed. Then there are comments.</p>
+
+<blockquote><p>in <tt>Overview</tt> - <tt>Details</tt> the user should see a vertical list of links (instead of the Monitoring link shown in the screenshot).</p></blockquote>
+
+<ol>
+	<li>We discussed that the new functionality will add options, but not replace them. Logs/Traces/Monitoring are the options which currently exist.</li>
+	<li>Vertical list of links – not specified what is in this list. If you mean it’s the list of relevant Dashboards from Grafana, then I would suggest not to do it this way, for two reasons:
+	<ol>
+		<li>It will consume screen space, the block ‘Storage groups’ may become totally invisible without scrolling</li>
+		<li>Looking up in Grafana when rendering the Overview-Details page may result in delays or even failure to display it if something with Grafana integration is not working properly</li>
+	</ol>
+	</li>
+	<li>There’s no mention that the links do not just to dashboards, but have the preinitialised values for parameters ‘data source’ and ‘cluster’ (or which ones?), while it’s the main value brought in by our integration.</li>
+</ol>
+
+
+<blockquote><p>in <tt>Databases</tt> section, the user need to see a vertical list of links in the tooltip (instead of the Monitoring link shown in the screenshot)</p></blockquote>
+
+<ol>
+	<li>The same like for the previous – we are adding functionality, not replacing. How the existing links + new functionality will look/work?</li>
+	<li>It makes sense to write that when user clicks on the ‘<img class="emoticon" src="/images/icons/emoticons/information.png" height="16" width="16" align="absmiddle" alt="" border="0"/>’ button, a request to Grafana is being made to get a list of relevant Dashboards. Then, the links show are enriched with the values for the ‘database’ field, so that the user goes not just to the dashboard, but also has its ‘datasource’, ‘cluster’ and ‘database’ parameter values preinitialised.</li>
+</ol>
+
+
+<blockquote><p>On the database page, the user needs to see several link icons in line that duplicate the links from the second item (instead of the Monitoring icon shown in the screenshot). When you click on icon, a new window will open with either the dashboard or the logs in Grafana.</p></blockquote>
+
+<ol>
+	<li>The same like for the previous 2 citations above.</li>
+	<li>That’s not clear for me how do the ‘several link icons’ look like. And again, it you’re going to build them while rendering the page, you’ll have the problem with delays or failures to display the whole page if Grafana integration is not working.</li>
+</ol>
+
+        </td></tr>
+                <tr id="comment-header-7016400"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                id="word_commented_712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f">
+                    Andrei Rykov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">06/ноя/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-7016400"><td bgcolor="#ffffff">
+            <p><a href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" class="user-hover" rel="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" data-account-id="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" accountid="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" rel="noreferrer">Alexander Smirnov</a>  Thanks for the detailed feedback.</p>
+
+<p>I have clarified User/UI behavior in the scenarios description:</p>
+
+<ol>
+	<li><b>Functionality will add options, but not replace them</b>. I clarified that the existing links remain unchanged and new links are appended below them, not replacing anything.</li>
+	<li><b>Updated the description of the vertical list of links and the several link icons.</b> The vertical list now clearly refers to the combined set of links (existing + new).
+	<ul>
+		<li>Updated the description and added screenshots for clarity.</li>
+		<li>If too much screen space is used, the details block can be collapsed so the database list remains visible without scrolling.</li>
+		<li>The UI requests Grafana on page load only once. If the request fails or times out, static links are shown and the page loads normally (fallback).</li>
+	</ul>
+	</li>
+	<li><b>There’s no mention that the links do not just to dashboards.</b> I added info that dashboards open with auto-filled <tt>ds</tt>, <tt>workspace</tt>, and <tt>database</tt> parameters.</li>
+</ol>
+
+        </td></tr>
+                <tr id="comment-header-7033586"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7"
+                id="word_commented_712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A9b6f6940-7c5c-486d-b283-abfb0ef8b2e7">
+                    Alexander Smirnov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">10/ноя/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-7033586"><td bgcolor="#ffffff">
+            <p>Please have further comments/questions.</p>
+
+<ol>
+	<li>Why do you say ‘tag-based links’ for configuration? Do you expect this config section to be used for anything but Grafana?</li>
+	<li>If I get it right, there’s an intermediate state when the page displays the static links, but still waits for the response from Grafana. What is shown at this moment?</li>
+	<li>Dynamic refresh in background which moves other components is questionable in terms of UX, as the user can decide to click below, and right at this moment the contents are moved, so he clicks on the wrong place.</li>
+	<li>There’s no need to request the list of dashboards from Grafana until the moment when the user decides to navigate to them.</li>
+</ol>
+
+        </td></tr>
+                <tr id="comment-header-7036157"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                id="word_commented_712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f">
+                    Andrei Rykov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">11/ноя/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-7036157"><td bgcolor="#ffffff">
+            <p><a href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" class="user-hover" rel="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" data-account-id="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" accountid="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" rel="noreferrer">Alexander Smirnov</a> </p>
+
+<blockquote><p>Why do you say ‘tag-based links’ for configuration?</p></blockquote>
+
+<p>These are links that the UI loads using the Grafana API. The UI uses a known Grafana tag to perform the request.</p>
+
+<blockquote><p>Do you expect this config section to be used for anything but Grafana?</p></blockquote>
+
+<p>This section can be used for other links as well. I expect we will use this functionality.</p>
+
+<blockquote><p>If I get it right, there’s an intermediate state when the page displays the static links, but still waits for the response from Grafana. What is shown at this moment?</p></blockquote>
+
+<p>Not exactly. Grafana request happens before the page is rendered, asynchronously together with other requests to YDB. There should be a reasonable timeout for loading this data (1 sec). I think this request should be cached by tag, since the response is mostly the same and we have a single endpoint. There is no point to call the API repeatedly.</p>
+
+<p>Depending on the result, there are two cases:</p>
+
+<ol>
+	<li>Successful load. All links are shown: static and those loaded by tag from Grafana.</li>
+	<li>Failed load. Only static links are shown. А placeholder can be shown instead of the loaded dashboards (Failed to load dashboards)</li>
+</ol>
+
+
+<blockquote><p>Dynamic refresh in background which moves other components is questionable in terms of UX, as the user can decide to click below, and right at this moment the contents are moved, so he clicks on the wrong place.</p></blockquote>
+
+<p>I would like to avoid this. I think a good solution is to make the Grafana request before rendering the page, as described above.</p>
+
+<blockquote><p>There’s no need to request the list of dashboards from Grafana until the moment when the user decides to navigate to them.</p></blockquote>
+
+<p>Preloading before the page is shown:</p>
+
+<ul>
+	<li>repeats the mechanism already used now for displaying YDB information</li>
+	<li>will not take much time</li>
+	<li>will allow showing the correct links immediately (no component movement)</li>
+	<li>will usually be cached, so there is no reason not to use it</li>
+</ul>
+
+        </td></tr>
+                <tr id="comment-header-7036202"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7"
+                id="word_commented_712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A9b6f6940-7c5c-486d-b283-abfb0ef8b2e7">
+                    Alexander Smirnov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">11/ноя/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-7036202"><td bgcolor="#ffffff">
+            <p><a href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f" class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f" data-account-id="712020:8b69336d-51ba-4e44-920f-ddf22872c09f" accountid="712020:8b69336d-51ba-4e44-920f-ddf22872c09f" rel="noreferrer">Andrei Rykov</a> </p>
+
+<p>If “these are links which use Grafana API” then why not to call it ‘Grafana links’? Also, we discussed earlier that we’re going to have a configuration section for Grafana integration, called ‘grafana:’ in the config yaml. Do you suggest to have anything alternate?</p>
+
+<p>Re performing a request to Grafana before rendering the page, may I ask you to come up with other options? We can then compare them, and decide rationally why to choose which. Discussing only one option is not practical - there can be indefinite number of reasons both ‘for’ and ‘against’.</p>
+
+<p>You told ‘grafana links’ are displayed. I would mention here that those links are already enriched with the ‘ds’ and ‘workspace’ parameters, to point to the dashboard for the current cluster,</p>
+        </td></tr>
+                <tr id="comment-header-7036607"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                id="word_commented_712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f">
+                    Andrei Rykov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">11/ноя/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-7036607"><td bgcolor="#ffffff">
+            <p><a href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" class="user-hover" rel="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" data-account-id="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" accountid="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" rel="noreferrer">Alexander Smirnov</a> </p>
+
+<blockquote><p>If “these are links which use Grafana API” then why not to call it ‘Grafana links’? </p></blockquote>
+
+<p>To avoid confusion, I needed to highlight that these Grafana links are loaded by tag. I expect there may also be links related to logs, for example. This is also Grafana, but they are not loaded by tag.</p>
+
+<blockquote><p>Also, we discussed earlier that we’re going to have a configuration section for Grafana integration, called ‘grafana:’ in the config yaml. Do you suggest to have anything alternate?</p></blockquote>
+
+<p>We’re going to have a configuration section for Grafan intergration. Not sure I understood the question. What does “alternate” mean?</p>
+
+<p>We need to support links to non-Grafana resources too, for example, for diagnostics or documentation. I think the Grafana block should handle other sources as well. As far as I remember, we discussed this. You are okay with it, right?</p>
+
+<blockquote><p>Re performing a request to Grafana before rendering the page, may I ask you to come up with other options? We can then compare them, and decide rationally why to choose which. Discussing only one option is not practical - there can be indefinite number of reasons both ‘for’ and ‘against’.</p></blockquote>
+
+<p>I will write it in the next comment a bit later.</p>
+
+<blockquote><p>You told ‘grafana links’ are displayed. I would mention here that those links are already enriched with the ‘ds’ and ‘workspace’ parameters, to point to the dashboard for the current cluster,</p></blockquote>
+
+<p>One of the steps in the scenario: <tt>a new tab opens in Grafana with auto-filled parameters (ds, workspace)</tt></p>
+        </td></tr>
+                <tr id="comment-header-7037104"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7"
+                id="word_commented_712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A9b6f6940-7c5c-486d-b283-abfb0ef8b2e7">
+                    Alexander Smirnov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">11/ноя/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-7037104"><td bgcolor="#ffffff">
+            <p><a href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f" class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f" data-account-id="712020:8b69336d-51ba-4e44-920f-ddf22872c09f" accountid="712020:8b69336d-51ba-4e44-920f-ddf22872c09f" rel="noreferrer">Andrei Rykov</a> </p>
+
+<blockquote><p>“To avoid confusion … these Grafana links are loaded by tag”. </p></blockquote>
+
+<p>Now I got it) You avoided one confusion but replaced it with another, as it looks now like those tag-based links are not only Grafana-related. I would suggest rephrasing ‘If tag-based links are configured…’ to ‘If <b>Grafana</b> tag-based links are configured…’ to avoid both confusions.</p>
+
+<p>The question about alternate sources is also pulled off in this regard.</p>
+
+<blockquote><p>We need to support links to non-Grafana resources too, for example, for diagnostics or documentation.</p></blockquote>
+
+<p>Other sources without Grafana specifics, just static links – yes, it must remain, yet we decided not to improve it anyhow as part of this ticket, just leave 3 existing options.</p>
+
+<blockquote><p> I think the Grafana block should handle other sources as well.</p></blockquote>
+
+<p>May I ask you to elaborate on that? </p>
+
+<blockquote><p>One of the steps in the scenario… <tt>a new tab opens in Grafana with auto-filled parameters (ds, workspace)</tt></p></blockquote>
+
+<p>Yes I saw it, and this last step is ok. But I’m suggesting to add information about forging links to the step when they are loaded/displayed, to reveal the technological magic behind the last step.</p>
+        </td></tr>
+                <tr id="comment-header-7039148"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                id="word_commented_712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f">
+                    Andrei Rykov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">11/ноя/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-7039148"><td bgcolor="#ffffff">
+            <p><a href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" class="user-hover" rel="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" data-account-id="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" accountid="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" rel="noreferrer">Alexander Smirnov</a> </p>
+
+<blockquote><p>Re performing a request to Grafana before rendering the page, may I ask you to come up with other options? We can then compare them, and decide rationally why to choose which. Discussing only one option is not practical - there can be indefinite number of reasons both ‘for’ and ‘against’.</p></blockquote>
+
+<p>I selected 4 possible approaches. You’ll see that some of these options are similar in terms of when data is loaded or how the links are shown. Below are implementation options with steps, pros and cons.</p>
+
+<p><b>Option 1. UI preloads Grafana links and shows all links as a vertical list of links.</b></p>
+
+<h3><a name="Steps%3A"></a>Steps:</h3>
+<ol>
+	<li>User goes to the cluster page.</li>
+	<li>UI performs the initial render and shows a loading spinner.</li>
+	<li>UI sends the Grafana request asynchronously on page load.</li>
+	<li>UI waits for Grafana response or timeout (1 sec).</li>
+	<li>UI renders the page and displays available links.<br/>
+<b>Successful Grafana load:</b></li>
+</ol>
+<ul>
+	<li>UI shows vertical list of static links and Grafana tag-based links with filled parameters (ds, workspace, etc).<br/>
+<b>Failed Grafana load:</b></li>
+	<li>UI shows only static links.</li>
+	<li>UI shows a warning such as “Failed to load Grafana dashboards”.
+<h3><a name="Pros"></a>Pros</h3></li>
+	<li>No UI layout shifts.</li>
+	<li>No clicks or other user actions are required to see the links.
+<h3><a name="Cons"></a>Cons</h3></li>
+	<li>The list of links may take up space.</li>
+	<li>Unused request if user never opens <b>info <img class="emoticon" src="/images/icons/emoticons/information.png" height="16" width="16" align="absmiddle" alt="" border="0"/></b> icon in database links scenario.</li>
+</ul>
+
+
+<p><b>Option 2. UI preloads Grafana links and shows a Grafana badge</b></p>
+
+<h3><a name="Steps%3A"></a>Steps:</h3>
+<ol>
+	<li>User goes to the cluster page.</li>
+	<li>UI performs the initial render and shows a page-level loading spinner.</li>
+	<li>UI sends Grafana request on page load.</li>
+	<li>UI waits for Grafana response or timeout to complete.</li>
+	<li>UI shows the page. It shows legacy static links + separate badge for Grafana dashboards. Optional: the button may contain an icon, the name Grafana, and the number of known dashboards.<br/>
+<span class="image-wrap" style=""><img src="/rest/api/3/attachment/content/851352" alt="&quot;ChatGPT Image Nov 11" width="149" style="border: 0px solid black" /></span></li>
+	<li>User hovers Grafana badge.</li>
+	<li>UI shows pop-up.<br/>
+<b>Successful Grafana load:</b></li>
+</ol>
+<ul>
+	<li>Pop-up shows vertical list of Grafana static links + Grafana tag-based links with filled parameters (ds, workspace, etc).<br/>
+<b>Failed Grafana load:</b></li>
+	<li>Pop-up shows vertical list of Grafana static links.</li>
+	<li>Pop-up shows a warning such as “Failed to load Grafana dashboards”.
+<h3><a name="Pros"></a>Pros</h3></li>
+	<li>No UI layout shifts.</li>
+	<li>All Grafana links in one space.
+<h3><a name="Cons"></a>Cons</h3></li>
+	<li>Higher frontend complexity.</li>
+	<li>Unused request if user never opens Grafana badge.</li>
+</ul>
+
+
+<p><b>Option 3. UI shows a Grafana badge and load Grafana links on hover.</b></p>
+
+<h3><a name="Steps%3A"></a>Steps:</h3>
+<ol>
+	<li>User goes to the cluster page.</li>
+	<li>UI performs the initial render and shows a page-level loading spinner.</li>
+	<li>UI shows the page. It shows a list of legacy static links + separate badge for Grafana dashboards. Optional: the button may contain an icon, the name Grafana, and the number of known dashboards.<br/>
+<span class="image-wrap" style=""><img src="/rest/api/3/attachment/content/851353" alt="&quot;ChatGPT Image Nov 11" width="149" style="border: 0px solid black" /></span></li>
+	<li>User hovers Grafana button.</li>
+	<li>UI shows pop-up with static links immediately. UI shows a skeleton placeholder in place of dashboard links.</li>
+	<li>UI sends Grafana request for cluster Grafana tab-based dashboards.</li>
+	<li>UI waits for Grafana response.</li>
+	<li>When the response arrives, UI replaces the skeleton with the actual dashboard links and filled parameters (ds, workspace, etc).<br/>
+<b>Successful Grafana load:</b></li>
+</ol>
+<ul>
+	<li>UI shows static links + Grafana tag-based links with filled parameters (ds, workspace, etc).<br/>
+<b>Failed Grafana load:</b></li>
+	<li>UI keeps static links.</li>
+	<li>UI replaces the skeleton with a error message, for example: “Failed to load Grafana dashboards.”
+<h3><a name="Pros"></a>Pros</h3></li>
+	<li>Avoid requests if user never interacts with Grafana badge.</li>
+	<li>All Grafana links in one space.
+<h3><a name="Cons"></a>Cons</h3></li>
+	<li>Higher frontend complexity.</li>
+	<li>Possible UI layout shifts. Requires UI work to avoid shifts.</li>
+</ul>
+
+
+<p><b>Option 4. Meta resolves dashboards</b></p>
+
+<h3><a name="Steps"></a>Steps</h3>
+<ol>
+	<li>User goes to the cluster page.</li>
+	<li>UI sends cluster info request to Meta.</li>
+	<li>Meta fetches dashboards from Grafana. In case of errors, the <tt>grafana</tt> field includes the Grafana response code and text.</li>
+	<li>UI receives pre-built link list from Meta.</li>
+	<li>UI renders everything without external fetches.<br/>
+<b>Successful Grafana load:</b></li>
+</ol>
+<ul>
+	<li>UI shows static links + Grafana tag-based links with filled parameters (ds, workspace, etc).<br/>
+<b>Failed Grafana load:</b></li>
+	<li>UI shows static links.</li>
+	<li>UI shows a warning such as “Failed to load Grafana dashboards.”
+<h3><a name="Pros"></a>Pros</h3></li>
+	<li>No UI layout shifts.</li>
+	<li>Frontend changes are minimal.
+<h3><a name="Cons"></a>Cons</h3></li>
+	<li>Meta needs access to grafana</li>
+	<li>Meta response depends on Grafana access.</li>
+</ul>
+
+
+<p>For myself, I decided that options 1 and 2 are the simplest to implement and more predictable compared to options 3 and 4. I would suggest choosing one of them.</p>
+        </td></tr>
+                <tr id="comment-header-7039189"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                id="word_commented_712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f">
+                    Andrei Rykov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">11/ноя/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-7039189"><td bgcolor="#ffffff">
+            <p><a href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" class="user-hover" rel="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" data-account-id="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" accountid="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" rel="noreferrer">Alexander Smirnov</a> </p>
+
+<blockquote><p>I would suggest rephrasing ‘If tag-based links are configured…’ to ‘If <b>Grafana</b> tag-based links are configured…’ to avoid both confusions.</p></blockquote>
+
+<p>Agreed, this will be the best way.</p>
+
+<blockquote><p>Other sources without Grafana specifics, just static links – yes, it must remain, yet we decided not to improve it anyhow as part of this ticket, just leave 3 existing options.</p></blockquote>
+
+<p>Oh, now it's clear. It seems I missed the point that we decided not to improve other non-Grafana sources. I had the impression that the Grafana block should allow links to other sources, and I didn’t capture that correctly 😕 </p>
+
+<blockquote><p>Yes I saw it, and this last step is ok. But I’m suggesting to add information about forging links to the step when they are loaded/displayed, to reveal the technological magic behind the last step.</p></blockquote>
+
+<p>I will change it.</p>
+        </td></tr>
+                <tr id="comment-header-7044407"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7"
+                id="word_commented_712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A9b6f6940-7c5c-486d-b283-abfb0ef8b2e7">
+                    Alexander Smirnov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">12/ноя/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-7044407"><td bgcolor="#ffffff">
+            <p><a href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f" class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f" data-account-id="712020:8b69336d-51ba-4e44-920f-ddf22872c09f" accountid="712020:8b69336d-51ba-4e44-920f-ddf22872c09f" rel="noreferrer">Andrei Rykov</a> can you add an option ‘the same like in Grafana when user clicks on “other dashboards”’?</p>
+        </td></tr>
+                <tr id="comment-header-7044599"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                id="word_commented_712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f">
+                    Andrei Rykov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">12/ноя/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-7044599"><td bgcolor="#ffffff">
+            <p><a href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" class="user-hover" rel="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" data-account-id="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" accountid="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" rel="noreferrer">Alexander Smirnov</a> please check the 5th option</p>
+
+<p><b>Option 5. The same like in Grafana when user clicks on "other dashboards"</b></p>
+
+<h3><a name="Steps%3A"></a>Steps:</h3>
+<ol>
+	<li>User goes to the cluster page.</li>
+	<li>UI performs the initial render and shows a page-level loading spinner.</li>
+	<li>UI sends Grafana request on page load.</li>
+	<li>UI waits for Grafana response or timeout to complete.<br/>
+<b>Successful Grafana load:</b></li>
+	<li>UI shows the page. It shows legacy static links, grafana static links + label of tag (see pictures below). Optional: the number of known dashboards.</li>
+	<li>User hovers label of tag.</li>
+	<li>UI shows pop-up.</li>
+	<li>Pop-up shows Grafana tag-based links with filled parameters (ds, workspace, etc).<br/>
+<b>Failed Grafana load:</b></li>
+	<li>UI shows the page. It shows legacy static links, grafana static links.</li>
+	<li>UI show a warning such as “Failed to load Grafana dashboards”.
+<h3><a name="Pros"></a>Pros</h3></li>
+</ol>
+<ul>
+	<li>No UI layout shifts.</li>
+	<li>UI shows Grafana tag-based links like in Grafana itself in one space.
+<h3><a name="Cons"></a>Cons</h3></li>
+	<li>Higher frontend complexity.</li>
+	<li>Unused request if user never opens Grafana badge.
+<h2><a name="UIExamples"></a><b>UI Examples</b></h2>
+<p>Below are examples of tag-based Grafana links for cluster links and database links. The preferred option is listed first.</p></li>
+</ul>
+<ol>
+	<li>Cluster links<br/>
+<span class="image-wrap" style=""><img src="/rest/api/3/attachment/content/852216" alt="Screenshot 2025-11-12 at 18.28.26 (6).png" width="358" style="border: 0px solid black" /></span><br/>
+<span class="image-wrap" style=""><img src="/rest/api/3/attachment/content/852099" alt="Screenshot 2025-11-12 at 18.28.26 (3).png" width="360" style="border: 0px solid black" /></span><br/>
+<span class="image-wrap" style=""><img src="/rest/api/3/attachment/content/852214" alt="Screenshot 2025-11-12 at 18.28.26 (4).png" width="362" style="border: 0px solid black" /></span></li>
+	<li>Database links (Cluster page)<br/>
+<span class="image-wrap" style=""><img src="/rest/api/3/attachment/content/852389" alt="Screenshot 2025-11-13 at 11.04.21 (1).png" width="328" style="border: 0px solid black" /></span><br/>
+In the alternative option, second popup is expected to appear (The complexity is unknown.)<br/>
+<span class="image-wrap" style=""><img src="/rest/api/3/attachment/content/852388" alt="Screenshot 2025-11-13 at 11.04.21.png" width="333" style="border: 0px solid black" /></span></li>
+	<li>Database links (Database Info page)<br/>
+<span class="image-wrap" style=""><img src="/rest/api/3/attachment/content/852417" alt="Screenshot 2025-11-13 at 11.33.17.png" width="314" style="border: 0px solid black" /></span></li>
+</ol>
+
+        </td></tr>
+                <tr id="comment-header-7047041"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7"
+                id="word_commented_712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A9b6f6940-7c5c-486d-b283-abfb0ef8b2e7">
+                    Alexander Smirnov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">13/ноя/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-7047041"><td bgcolor="#ffffff">
+            <p><a href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f" class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f" data-account-id="712020:8b69336d-51ba-4e44-920f-ddf22872c09f" accountid="712020:8b69336d-51ba-4e44-920f-ddf22872c09f" rel="noreferrer">Andrei Rykov</a> Grafana performs a request to get the list of dashboards <ins>at the moment</ins> when you <ins>click</ins> on the ‘Other dashboards’.</p>
+        </td></tr>
+                <tr id="comment-header-7048853"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                id="word_commented_712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f">
+                    Andrei Rykov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">13/ноя/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-7048853"><td bgcolor="#ffffff">
+            <p><a href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" class="user-hover" rel="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" data-account-id="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" accountid="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" rel="noreferrer">Alexander Smirnov</a> </p>
+
+<blockquote><p>Grafana performs a request to get the list of dashboards <ins>at the moment</ins> when you <ins>click</ins> on the ‘Other dashboards’.</p></blockquote>
+
+<p>Below I listed the possible options for how to perform requests to Grafana.</p>
+
+<ol>
+	<li><b>Request handled by meta</b></li>
+</ol>
+
+
+<p>+ Simpler frontend implementation.<br/>
+– Meta needs access to Grafana.<br/>
+– If Grafana is unavailable, meta responses will be delayed.</p>
+
+<ol>
+	<li><b>Request on page load - waiting for Grafana response</b></li>
+</ol>
+
+
+<p>+ Simpler and more predictable frontend implementation.<br/>
+– If Grafana responds slowly, the page load will be delayed.</p>
+
+<ol>
+	<li><b>Request on page load - not waiting for Grafana response</b><br/>
+<em>The UI shows a loading spinner or skeleton on page while waiting for the response.</em></li>
+</ol>
+
+
+<p>+ Fast page load.<br/>
+– Higher frontend complexity to display data smoothly.</p>
+
+<ol>
+	<li><b>Request on button click, with a short timeout (Grafana-style variant)</b><br/>
+<em>The UI quickly renders a pop-up with the dashboard list or an error message.</em></li>
+</ol>
+
+
+<p>+ Fast page load.<br/>
++ No requests if the user doesn’t need the data.<br/>
++ Always up-to-date information.<br/>
+– If Grafana responds slowly, the user won’t see the dashboard list (cache reduces this issue)</p>
+
+<ol>
+	<li><b>Request on button click, with a long timeout (as implemented in Grafana)</b><br/>
+<em>The UI shows a loading spinner or skeleton in pop-up while waiting for the response.</em></li>
+</ol>
+
+
+<p>+ Fast page load.<br/>
++ No requests if the user doesn’t need the data.<br/>
++ Always up-to-date information.<br/>
+– Higher frontend complexity to display data smoothly.</p>
+
+<p>For myself, I decided that options 2 and 4 are better because they are simple and predictable.</p>
+        </td></tr>
+                <tr id="comment-header-7059196"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7"
+                id="word_commented_712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A9b6f6940-7c5c-486d-b283-abfb0ef8b2e7">
+                    Alexander Smirnov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">17/ноя/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-7059196"><td bgcolor="#ffffff">
+            <p><a href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f" class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f" data-account-id="712020:8b69336d-51ba-4e44-920f-ddf22872c09f" accountid="712020:8b69336d-51ba-4e44-920f-ddf22872c09f" rel="noreferrer">Andrei Rykov</a> Ok, now when we have all options, let me add some pros/cons against your preferable options (2/4) and mine (5). Great that you have added the one about ‘Always up-to-date information’ by yourself – it was one of those I was going to add as a ‘pro’ for 4 and 5. Also, it’s better to ensure that some feature which is listed among ‘pros’ somewhere is also list among ‘cons’ in other places.</p>
+
+<p>2:</p>
+
+<ul class="alternate" type="square">
+	<li>More requests to Grafana than needed (reverse to “No requests if the user doesn’t need the data”). I would estimate about 100x more requests (out of 100 page shows there will be only 1 when the user really wants to go to a Grafana dashboard then)</li>
+</ul>
+
+
+<ul class="alternate" type="square">
+	<li>Page needs to be fully reloaded to see the fresh list (reverse to “Always up-to-date information“). Usually makes no difference, but can be noticeable when the user changes the list on Grafana side, and also can lead to wasting time with public users when we fix something in Grafana in this list.</li>
+</ul>
+
+
+<ul class="alternate" type="square">
+	<li>Different behaviour between navigation <span class="error">&#91;YDB UI &gt; Grafana&#93;</span> and <span class="error">&#91;Grafana &gt; Grafana&#93;</span>.</li>
+</ul>
+
+
+<p>4:</p>
+
+<ul class="alternate" type="square">
+	<li>Nervous behaviour for user comparing to option 5. He clicked, nothing has shown. He clicks again, and again. It pops up but he already clicked another time, and nothing again. Using cached information changes the option, as we lose the ‘Always up-to-date information' feature.</li>
+</ul>
+
+
+<p>+ Consistent behaviour between navigation <span class="error">&#91;YDB UI &gt; Grafana&#93;</span> and <span class="error">&#91;Grafana &gt; Grafana&#93;</span> (when Grafana responds fast)</p>
+
+<p>5:</p>
+
+<p>+ Clear behaviour for user comparing to option 4. He clicked, saw the spinner, waits until the contents show.</p>
+
+<p>+ Consistent behaviour between navigation <span class="error">&#91;YDB UI &gt; Grafana&#93;</span> and <span class="error">&#91;Grafana &gt; Grafana&#93;</span> even if Grafana responds slow</p>
+
+
+
+<p>Concluding, looks like the only remaining minus of the option 5 is the complexity on the UI side. Have you asked them if it’s really difficult to implement? Also, the UI solution here can be used for other dynamic links to other systems we can integrate with in the future, not only for Grafana.</p>
+        </td></tr>
+                <tr id="comment-header-7065952"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                id="word_commented_712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f">
+                    Andrei Rykov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">18/ноя/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-7065952"><td bgcolor="#ffffff">
+            <p><a href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" class="user-hover" rel="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" data-account-id="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" accountid="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" rel="noreferrer">Alexander Smirnov</a> Thanks for the detailed feedback.</p>
+
+<p>Unfortunately, one important thing I missed: fetching the dashboard list from Grafana in the UI requires a cross-domain request. Browsers block such requests unless CORS is configured on the Grafana side. Setting up CORS for Grafana in our environment is quite complex, and without a strong business justification it is unlikely to be prioritized.</p>
+
+<p>With this limitation, I’m afraid, the only realistic option that remains is <b>Option 1: Request handled by meta</b>, since meta can access Grafana without browser restrictions.</p>
+
+<p>Moreover, I found another limitation of the <b>Option 1</b> solution that affects usability: the list of dashboards for test clusters must be provided through <a href="https://grafana.testing.nebius.dev/" class="external-link" rel="nofollow noreferrer">https://grafana.testing.nebius.dev/</a> rather than <a href="https://grafana.nebius.dev/" class="external-link" rel="nofollow noreferrer">https://grafana.nebius.dev/</a> as usual. This happens because one site is in the production environment and the other is in the test environment. I plan to clarify whether the information is synchronized between them in any form and what the possible solution options for the test clusters might look like.</p>
+        </td></tr>
+                <tr id="comment-header-7069792"><td bgcolor="#f0f0f0">
+            Комментарий по  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                id="word_commented_712020:8b69336d-51ba-4e44-920f-ddf22872c09f"
+                href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A8b69336d-51ba-4e44-920f-ddf22872c09f">
+                    Andrei Rykov
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">19/ноя/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-7069792"><td bgcolor="#ffffff">
+            <p><a href="https://nebius.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" class="user-hover" rel="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" data-account-id="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" accountid="712020:9b6f6940-7c5c-486d-b283-abfb0ef8b2e7" rel="noreferrer">Alexander Smirnov</a> To continue, I’ve gathered enough information to reason about the available options.<br/>
+It is definitely possible to teach Meta to access Grafana and fetch the list of dashboards - all the necessary pieces are available:</p>
+
+<ul>
+	<li>Meta can be given network access to Grafana.</li>
+	<li>It’s enough to perform an HTTP request using the Grafana service account token provided by the Grafana duty team</li>
+</ul>
+
+
+<p>Example:</p>
+
+<div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
+<pre>curl -i 'https://grafana.nebius.dev/api/search?tag=ydb-common' \
+  -H "Authorization: Bearer {token}" \
+  -H "Accept: application/json"</pre>
+</div></div>
+
+<p>As we discussed verbally, it’s not necessary for Meta to access Grafana during the cluster request - it can be a separate request. This gets rid of Meta’s dependency on Grafana for responses. In that sense, we could say that options 2–5 are still valid if we replace the Grafana request with a Meta request.</p>
+
+<p>I also reviewed how the dropdown behaves in Grafana, which gives us new option:</p>
+
+<p><b>Option 6: Request to Meta on button click, with a long timeout (as implemented in Grafana)</b><br/>
+<em>The UI shows a pop-up only when the response is received. If Grafana is unavailable, the pop-up does not appear.</em></p>
+
+<p>+ Fast page load.<br/>
++ No requests if the user doesn’t need the data.<br/>
++ Always up-to-date information.<br/>
++ Simpler frontend implementation.<br/>
++ No different behaviour between navigation in YDB UI and Grafana<br/>
+– Meta needs access to Grafana.<br/>
+– If Grafana responds slowly, user don’t see UI reaction after click<br/>
+– No static links in pop-up (fewer options for the pop-up design)</p>
+        </td></tr>
+            </table>
+Полученный Mon Nov 24 13:41:12 UTC 2025 Andrei Rykov используя JIRA 1001.0.0-SNAPSHOT#100290-rev:ab25348883679acbb6622b80c9f1fcbb3823d114.
+
+</body>
+</html>

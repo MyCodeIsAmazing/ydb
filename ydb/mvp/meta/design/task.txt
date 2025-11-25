@@ -1,0 +1,13 @@
+нужно написать спецификацию к доработке на английском языке
+сама доработка велась в jira, текст со всеми комментариями сохранен в файле NBYDB-1120.doc
+спецификация должна быть описана максимально согласуясь с документом how.txt и здравым смыслом и знаниями по дизайн документации
+какой-то информации может не хватать - в этом случаи необходимо отметить это в документе
+
+должно появиться два файла:
+- main.txt - в основном тексте написать основной вариант доработки и сделать ссылка на options.txt что в ней описание других опций
+- options.txt - должны быть описаны опции
+
+основной вариант который решили выбрать по итогу:
+- Request to Meta on button click, with a long timeout (as implemented in Grafana)
+- The UI shows a loading spinner or skeleton in pop-up while waiting for the response.
+- New Handler in Meta support new functionality to fetch data from Grafana
