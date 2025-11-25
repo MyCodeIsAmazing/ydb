@@ -1,0 +1,54 @@
+# Alternatives considered
+
+This file summarizes the options discussed while deciding how to surface Grafana dashboards in the YDB UI.
+
+## Option 1 — UI preloads Grafana links and shows all links in a vertical list
++ Load Grafana dashboards on page load; render list inline with static links.
++ No layout shift after load — the list is already on the page, matching user requests for a stable layout.
++ Zero user actions to view dashboards — everything is visible without clicks or hovers.
+- Page spends resources on an extra Grafana request even if the user never opens monitoring.
+- A vertical list can clutter the UI and compete with existing static links.
+
+## Option 2 — UI preloads Grafana links and shows a Grafana badge
++ Fetch dashboards on page load; show badge that opens pop-up with dashboards.
++ All Grafana links sit behind a single badge, simplifying navigation.
++ No layout shift — data is already fetched by the time the pop-up opens.
+- The background request may go unused if the badge is never opened (frequent ticket concern).
+- Frontend complexity rises: synchronize loading/display and handle errors before the first click.
+
+## Option 3 — UI shows Grafana badge and loads links on hover
++ Render badge immediately; fetch dashboards when user hovers; skeleton shows while loading.
++ No wasted background requests — Grafana is called only when the user intends to view dashboards (hover).
++ Links are grouped in one place, matching the “other dashboards” UX.
+- Frontend logic is more complex: handle rapid/repeated hovers and request cancellation.
+- Pop-up layout can shift if content size changes after loading.
+
+## Option 4 — Meta resolves dashboards during cluster request
++ UI requests cluster info; Meta calls Grafana and returns full link set.
++ Minimal frontend changes — the list arrives with other cluster information.
++ No layout shift: data is present at the first render of the monitoring block.
+- Cluster response latency depends on Grafana availability; timeouts degrade the primary flow.
+- Meta must maintain reliable Grafana access, complicating network and secret configuration.
+
+## Option 5 — Match Grafana “other dashboards” behaviour with preloaded Grafana request
++ UI preloads Grafana data and shows tag label/badge; pop-up displays tag-based dashboards.
++ Matches Grafana’s native “other dashboards” UX that users already understand.
++ Links stay in one place and can be grouped by tag.
+- The backend request may be wasted if the user never opens the pop-up, but load is already created.
+- UI becomes more complex: preload and manage loading/error state before the user clicks.
+
+## Option 6 — Request to Meta on button click with long timeout (chosen)
++ UI sends request to Meta only on user click; pop-up waits to open until data arrives; long timeout similar to Grafana dropdown.
++ Instant page load — no Grafana calls before user action.
++ No “empty” requests: Grafana is called only when the list is needed.
++ Always-fresh list because the request is on demand and Meta can proxy the current environment.
++ Frontend is simpler than preload/hover variants: no race conditions on first render.
++ Semantics match Grafana’s dropdown — waiting for a response with an indicator.
+- Users experience delay when Grafana/Meta is slow; important risk noted in ticket feedback.
+- Meta needs reliable Grafana access and correct tokens/networking; otherwise the button is useless.
+- No fallback Grafana links in the pop-up if Meta or Grafana fails; only static links on the page remain.
+- Mitigations/notes:
+  + Spinner/skeleton shows progress to avoid “dead click” perception.
+  + Short Meta-side cache reduces repeat delays when the pop-up is opened multiple times in a row.
+  + Feature flag and/or circuit breaker allow quickly disabling the Grafana path during degradation.
+  + Static monitoring links on the page remain available as fallback.

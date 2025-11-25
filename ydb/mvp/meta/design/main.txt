@@ -1,0 +1,181 @@
+# Grafana Integration for YDB Meta and UI
+
+## Context and scope
+
+- Cluster and database pages in the `YDB UI` currently show a limited hardcoded set of static monitoring links.
+- To add or update links, `YDB` team must update the `Meta` database, iterations are slow.
+- `Grafana` remains the primary provider of observability data.
+- `Grafana` already groups dashboards by tags, that parameterized for each cluster and database.
+
+## Goals
+
+- Added `Grafana` integration to `Meta` and the `YDB UI` for displaying `Grafana` links.
+- Manage dashboard links in `Grafana` using tags.
+
+## Non-goals
+
+- Redesign of existing static monitoring links.
+- Added links for `non-Grafana` monitoring solutions.
+- Broad `Grafana` configuration management. Only what is necessary to follow the `Grafana` links and fetch `Grafana` dashboards is in scope.
+- Full UI visual specification. Only behaviour and integration points are defined here.
+
+## Chosen design
+
+- **UI trigger:** user clicks or hovers the links entry point (badge/button) on cluster or database pages, the `UI` makes a single request to `Meta` for the dashboard list.
+- **UX:** UI shows static parameterized `Grafana` links immediately, and displays a loading skeleton at the end of the list while the dashboard list is being fetched.
+- **Timeout:** Long-running Discovery request, mirroring `Grafana`’s own dropdown behaviour; `UI` waits for completion and show loading skeleton.
+
+See `options.txt` for the evaluated alternatives and trade-offs.
+
+## High-Level Flow
+
+- User opens a cluster or database page; static legacy monitoring links render immediately.
+- User hovers/clicks the `Grafana` dashboards control.
+- `UI` opens a pop-up container.
+- `UI` build static `Grafana` links by populating placeholders and rendering them immediately.
+- `UI` calls Meta endpoint for tag-based links and shows skeleton instead while waiting.
+- Meta queries the `Grafana` search `API` with configured token and tag filters, and returns a JSON list of dashboards.
+- `UI` build tag-based `Grafana` links by populating placeholders.
+- `UI` replaces the skeleton with returned links grouped by tag (if provided). On errors, `UI` shows an error.
+
+## Components and new responsibilities
+
+`UI <-> Meta <-> Grafana`
+
+1. **UI**
+    - The `UI` populates placeholders in `Grafana` links using `Meta` information of the specific databases or cluster.
+    - Render the page with existing `Grafana` static links (legacy and Grafana) immediately; `Grafana` tag-based links on demand.
+    - When the user clicks the `Grafana` badge/button, show a loading skeleton inside pop-up container.
+    - Await `Meta` response; on success, populate dashboard list grouped by tag; on failure/timeout, show an error while leaving static links untouched.
+2. **Meta**
+    - Return `Grafana` static links and `Grafana` dashboard tags with cluster info to `UI`.
+    - Fetch dashboards by tag (e.g., `ydb-common`) using `Grafana` HTTP API.
+    - Return structured errors (HTTP status/text) when `Grafana` is unreachable, authorization fails.
+    - Requires network access to `Grafana` instances and valid API tokens.
+    - Requires all metadata for `Grafana` links templating.
+3. **Grafana**
+    - Hosts dashboards tagged for `YDB` clusters and databases.
+    - Requires service account tokens to search dashboards.
+
+## Meta Configuration
+
+New `Grafana` block in configuration defines all settings used for synchronizing monitoring links with Grafana.
+Clusters share a common list of links defined in cluster_links; only parameter values differ and are populated individually per cluster.
+Databases follow the same approach: there are two predefined link lists - one for dedicated databases and one for serverless databases. All databases of the same type use the same link set, while parameter values are filled separately for each database instance.
+
+```yaml
+meta:
+  meta_api_endpoint: grpcs://shared-1-grpc.ydb-global.svc.cluster.local:2135
+  meta_database: /testing-global/ydb-ui
+  meta_database_token_name: testing
+  db_user_token_access: true
+  grafana:
+    url: https://grafana.nebius.dev/
+    cluster_links:
+      - url: https://ydb.tech/docs/en/
+        title: Documentation
+        icon: documentation
+      - url: /d/edu4pqfd83pj4d/cluster-overview-wip
+        params: &cluster_params&orgId=1&from=now-6h&to=now&timezone=browser&var-ds=%datasource%&var-workspace=%k8s_namespace%
+        title: Overview
+        icon: monitoring
+      - fetch_by_tag: ydb-cluster
+        params: *cluster_params
+    dedicated_links:
+      - fetch_by_tag: ydb-dedicated
+        params: &database_params orgId=1&from=now-6h&to=now&timezone=browser&var-ds=%datasource%&var-workspace=%k8s_namespace%&var-database=%database%
+      - url: /explore
+        params: &logs_params schemaVersion=1&panes=%7B...%7D&orgId=1
+        title: Logs
+        icon: logs
+    serverless_links:
+      - fetch_by_tag: ydb-serverless
+        params: *database_params
+      - url: /explore
+        params: *logs_params
+        title: Logs
+        icon: logs
+```
+
+## Grafana link parameters
+
+There are two ways to define `Grafana` links in `Meta` configuration, both described below with their parameters.
+- Using url
+Required fields:
+• url - direct link shown in the `UI`.
+• title - display name.
+• icon - predefined icon name (logs, monitoring, coredump, documentation, link).
+• params - query parameters appended to the URL. Dynamic placeholders in %...% are allowed. `Meta` substitutes them using cluster or database metadata. If a placeholder has no value, it is kept unchanged.
+
+- Using fetch_by_tag
+• fetch_by_tag - loads dashboards via `Grafana API` by tag.
+• params - the same as for using url. Applied to every fetched dashboard URL.
+
+## Meta Cluster Endpoint Contract
+
+If the `grafana` configuration block is available, `Meta` provides new links information in the `/meta/meta/db_clusters` JSON response mirroring the configuration structure in the 'grafana' block.
+
+```
+{
+    "clusters": [/*...*/],
+    "grafana": [/*...*/]
+}
+```
+
+The old information in block `clusters` is left unchanged.
+
+## Meta Grafana Fetch Dashboards Contract
+
+New endpoint in `Meta`: `/meta/grafana/dashboards?tag={tag}` proxies requests to `Grafana API` to fetch dashboards request. Example request:
+
+``` bash
+curl -i 'https://grafana.nebius.dev/api/search?tag=ydb-common' \
+  -H "Authorization: Bearer {token}" \
+  -H "Accept: application/json"
+```
+
+Url path `https://grafana.nebius.dev` is derived from the `url` field in the `grafana` configuration block.
+`Grafana` service account token is located in separate file.
+
+Reponse from `Grafana` is proxied to `UI` with minimal normalization.
+- Response success: 200 application/json with a proxied `Grafana` payload that always contains an array of dashboards. Minimal normalization: `Meta` injects resolved URLs with templated parameters.
+- Response failure: `Meta` returns a JSON body containing the `Grafana` status (if available) and a `Meta`-specific error code if available. Example:
+``` json
+{
+    "grafana_error":
+    {
+        "status": 403,
+        "title": "Forbidden",
+        "message": "Grafana API token is invalid",
+    }
+}
+```
+- Response timeout: `Meta` returns `504 Gateway Timeout`. Format is the same as response failure.
+
+## Grafana proposed list of tags:
+
+`ydb-databases` - database dashboards used for the dropdown list in `Grafana` (can include both dedicated and serverless dashboards).
+`ydb-dedicated`, `ydb-serverless` - defined in the `Meta` database; use a smaller set of dashboards than ydb-databases, focusing on those most useful to the user.
+`ydb-clusters` – cluster dashboards defined in the `Meta` database, used for the dropdown list in `Grafana`.
+
+## Tags management:
+
+- Combine dashboards into one tag.
+    - Go to dashboard - Settings - Tags
+    - Add the required tag.
+- Add links on the dashboard by tag.
+    - Go to dashboard - Settings - Links - New link
+    - Choose type - Dashboards
+    - Add the required tag.
+    - Enable Show as dropdown, Include current time range,  Include current template variable values
+
+## Steps for implementation:
+
+- Add the tags `ydb-databases` and `ydb-clusters`, and configure navigation between dashboards in Grafana.
+- Add the tags `ydb-dedicated` and `ydb-serverless`, leaving them empty for now.
+- Clarify how new clusters are added to the `Meta` database. Check whether there are any scripts or automated processes that insert cluster information into the `Meta` database. Make changes to the scripts or documentation.
+- Add changes on the `Meta` side. Deploy `Meta` and verify that the `/meta/db_clusters` response has changed and now includes new fields: cluster_links etc.
+- Create the new `datasource` column in `Meta` database. And fill it with a value from `Grafana` for each cluster. Add fetching by tag in `Meta` configuration with `ydb-dedicated` and `ydb-serverless` tags.
+- Verify that the `UI` update works (it may be ready earlier).
+- Add the necessary dashboards to the `ydb-dedicated` and `ydb-serverless` tags.
+- Delete old links from `Meta` database.
